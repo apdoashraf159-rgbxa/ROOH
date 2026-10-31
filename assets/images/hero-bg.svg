@@ -1,0 +1,25 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bgGrad" cx="70%" cy="30%" r="90%">
+      <stop offset="0%" stop-color="#4A0E17" />
+      <stop offset="45%" stop-color="#2D070D" />
+      <stop offset="85%" stop-color="#190306" />
+      <stop offset="100%" stop-color="#0E0103" />
+    </radialGradient>
+    <linearGradient id="goldWave" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#F3E5AB" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#AA771C" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bgGrad)" />
+  <path d="M0 300 Q400 150 800 400 T1600 250 L1600 900 L0 900 Z" fill="url(#goldWave)" />
+  <path d="M0 500 Q500 350 1000 600 T1600 450 L1600 900 L0 900 Z" fill="#24050A" opacity="0.6"/>
+  <g fill="#D4AF37" opacity="0.3">
+    <circle cx="150" cy="180" r="1.5"/><circle cx="320" cy="120" r="2.5"/><circle cx="480" cy="240" r="1.2"/>
+    <circle cx="720" cy="90" r="2"/><circle cx="890" cy="190" r="1.8"/><circle cx="1100" cy="140" r="3"/>
+    <circle cx="1340" cy="220" r="1.5"/><circle cx="1450" cy="110" r="2"/>
+    <circle cx="200" cy="680" r="2"/><circle cx="580" cy="740" r="1.5"/><circle cx="950" cy="620" r="2.2"/>
+    <circle cx="1250" cy="780" r="1.8"/><circle cx="1400" cy="600" r="2.5"/>
+  </g>
+</svg>

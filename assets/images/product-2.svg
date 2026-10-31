@@ -1,0 +1,39 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <radialGradient id="prodBg2" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7"/>
+      <stop offset="70%" stop-color="#EDE5D8"/>
+      <stop offset="100%" stop-color="#D8CBBA"/>
+    </radialGradient>
+    <linearGradient id="goldSheen2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEAB8"/>
+      <stop offset="35%" stop-color="#D4AF37"/>
+      <stop offset="70%" stop-color="#FFF2CE"/>
+      <stop offset="100%" stop-color="#9C721A"/>
+    </linearGradient>
+    <linearGradient id="liquidGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B8860B"/>
+      <stop offset="50%" stop-color="#DAA520"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+    <filter id="softShadow2" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#2D1115" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="600" fill="url(#prodBg2)"/>
+  <ellipse cx="300" cy="510" rx="200" ry="30" fill="#BCAE9C" opacity="0.4" filter="blur(10px)"/>
+  <ellipse cx="300" cy="505" rx="150" ry="18" fill="#3D181D" opacity="0.16" filter="blur(6px)"/>
+  <circle cx="300" cy="270" r="160" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.15" stroke-dasharray="3 4"/>
+  <circle cx="300" cy="270" r="135" fill="none" stroke="#D4AF37" stroke-width="0.5" opacity="0.1"/>  <g filter="url(#softShadow2)">
+    <rect x="250" y="420" width="100" height="45" rx="6" fill="url(#goldSheen2)"/>
+    <path d="M260 420 L240 160 C238 140 248 130 265 130 L335 130 C352 130 362 140 360 160 L340 420 Z" fill="url(#liquidGrad2)"/>
+    <rect x="238" y="125" width="124" height="12" rx="2" fill="#1C1B1B"/>
+    <path d="M255 145 L268 410" stroke="#FFF" stroke-width="8" stroke-linecap="round" opacity="0.3"/>
+    <text x="300" y="210" font-family="'Cinzel', serif" font-size="15" font-weight="700" letter-spacing="3" fill="url(#goldSheen2)" text-anchor="middle">ROOH</text>
+    <line x1="270" y1="225" x2="330" y2="225" stroke="#D4AF37" stroke-width="0.8"/>
+    <text x="300" y="260" font-family="'Cinzel', serif" font-size="9" font-weight="700" fill="#FFFDF8" text-anchor="middle">24K Pure Gold Cleanser</text>
+    <text x="300" y="295" font-family="'Montserrat', sans-serif" font-size="8" font-weight="600" letter-spacing="1" fill="#E8D8CE" text-anchor="middle">DERMATOLOGICALLY TESTED</text>
+    <text x="300" y="350" font-family="'Cinzel', serif" font-size="10" font-weight="700" fill="url(#goldSheen2)" text-anchor="middle">150 ML</text>
+  </g>  <text x="300" y="570" font-family="'Cinzel', serif" font-size="10" letter-spacing="4" fill="#938276" text-anchor="middle">ROOH BEAUTE - CAIRO &amp; PARIS</text>
+</svg>

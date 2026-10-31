@@ -1,0 +1,38 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <radialGradient id="prodBg13" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7"/>
+      <stop offset="70%" stop-color="#EDE5D8"/>
+      <stop offset="100%" stop-color="#D8CBBA"/>
+    </radialGradient>
+    <linearGradient id="goldSheen13" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEAB8"/>
+      <stop offset="35%" stop-color="#D4AF37"/>
+      <stop offset="70%" stop-color="#FFF2CE"/>
+      <stop offset="100%" stop-color="#9C721A"/>
+    </linearGradient>
+    <linearGradient id="liquidGrad13" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3A2318"/>
+      <stop offset="50%" stop-color="#573827"/>
+      <stop offset="100%" stop-color="#3A2318"/>
+    </linearGradient>
+    <filter id="softShadow13" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#2D1115" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="600" fill="url(#prodBg13)"/>
+  <ellipse cx="300" cy="510" rx="200" ry="30" fill="#BCAE9C" opacity="0.4" filter="blur(10px)"/>
+  <ellipse cx="300" cy="505" rx="150" ry="18" fill="#3D181D" opacity="0.16" filter="blur(6px)"/>
+  <circle cx="300" cy="270" r="160" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.15" stroke-dasharray="3 4"/>
+  <circle cx="300" cy="270" r="135" fill="none" stroke="#D4AF37" stroke-width="0.5" opacity="0.1"/>  <g filter="url(#softShadow13)">
+    <path d="M215 240 C215 225 240 215 300 215 C360 215 385 225 385 240 L385 272 L215 272 Z" fill="url(#goldSheen13)"/>
+    <ellipse cx="300" cy="216" rx="85" ry="14" fill="#FFF8DE"/>
+    <rect x="210" y="268" width="180" height="9" rx="2" fill="#9C721A"/>
+    <path d="M212 277 L222 430 C226 460 255 472 300 472 C345 472 374 460 378 430 L388 277 Z" fill="url(#liquidGrad13)" opacity="0.92"/>
+    <ellipse cx="300" cy="335" rx="65" ry="35" fill="#FFF" opacity="0.18"/>
+    <circle cx="300" cy="365" r="34" fill="#FFFDF8" stroke="url(#goldSheen13)" stroke-width="1.3"/>
+    <text x="300" y="360" font-family="'Cinzel', serif" font-size="11" font-weight="700" fill="#3B0A11" text-anchor="middle">ROOH</text>
+    <text x="300" y="377" font-family="'Montserrat', sans-serif" font-size="8.5" font-weight="700" fill="#721C24" text-anchor="middle">280 ML</text>
+  </g>  <text x="300" y="570" font-family="'Cinzel', serif" font-size="10" letter-spacing="4" fill="#938276" text-anchor="middle">ROOH BEAUTE - CAIRO &amp; PARIS</text>
+</svg>

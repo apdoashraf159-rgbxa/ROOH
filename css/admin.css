@@ -1,0 +1,720 @@
+/* ==========================================================================
+   ROOH | رُوح — Business Management System & Admin Ecosystem
+   Luxury Dark/Burgundy Admin Styling
+   ========================================================================== */
+
+:root {
+  --admin-bg: #0F0B0C;
+  --admin-card: #181214;
+  --admin-card-hover: #221A1C;
+  --admin-sidebar: #140E10;
+  --admin-border: rgba(212, 175, 55, 0.2);
+  --admin-border-light: rgba(255, 255, 255, 0.08);
+  --admin-text: #F3ECE6;
+  --admin-text-muted: #9E918B;
+  --admin-gold: #D4AF37;
+  --admin-gold-hover: #E8C85E;
+  --admin-burgundy: #58111A;
+  --admin-crimson: #8C1C28;
+  --admin-green: #2E7D32;
+  --admin-green-glow: rgba(46, 125, 50, 0.2);
+  --admin-blue: #1976D2;
+  --admin-orange: #EF6C00;
+  
+  --font-arabic: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body.admin-body {
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
+  font-family: var(--font-arabic);
+  direction: rtl;
+  text-align: right;
+  min-height: 100vh;
+  display: flex;
+}
+
+body.admin-body.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ==========================================================================
+   Admin Sidebar Navigation
+   ========================================================================== */
+.admin-sidebar {
+  width: 280px;
+  background: var(--admin-sidebar);
+  border-left: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+body.admin-body.ltr .admin-sidebar {
+  border-left: none;
+  border-right: 1px solid var(--admin-border);
+}
+
+.admin-sidebar-header {
+  padding: 1.5rem 1.4rem;
+  border-bottom: 1px solid var(--admin-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-brand-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-logo-small {
+  height: 38px;
+  width: auto;
+}
+
+.admin-brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--admin-gold);
+  line-height: 1.2;
+}
+
+.admin-brand-sub {
+  font-size: 0.75rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-nav-menu {
+  flex: 1;
+  padding: 1.2rem 0.8rem;
+  overflow-y: auto;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-nav-item {
+  width: 100%;
+}
+
+.admin-nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  color: var(--admin-text-muted);
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.2s ease;
+  text-align: right;
+  border: 1px solid transparent;
+}
+
+body.admin-body.ltr .admin-nav-btn {
+  text-align: left;
+}
+
+.admin-nav-btn svg {
+  width: 20px;
+  height: 20px;
+  color: var(--admin-text-muted);
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.admin-nav-btn:hover {
+  background: var(--admin-card);
+  color: #FFF;
+  border-color: var(--admin-border-light);
+}
+
+.admin-nav-btn:hover svg {
+  color: var(--admin-gold);
+}
+
+.admin-nav-btn.active {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(88, 17, 26, 0.35));
+  color: #FFF;
+  border-color: var(--admin-border);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.admin-nav-btn.active svg {
+  color: var(--admin-gold);
+}
+
+.admin-badge-alert {
+  margin-right: auto;
+  background: var(--admin-crimson);
+  color: #FFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+body.admin-body.ltr .admin-badge-alert {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Sidebar Footer Profile */
+.admin-sidebar-footer {
+  padding: 1.2rem;
+  border-top: 1px solid var(--admin-border-light);
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--admin-burgundy);
+  border: 1px solid var(--admin-gold);
+  color: var(--admin-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.admin-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.admin-role-badge {
+  font-size: 0.74rem;
+  color: var(--admin-gold);
+}
+
+/* ==========================================================================
+   Admin Main Content Layout
+   ========================================================================== */
+.admin-main-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* Admin Top Bar */
+.admin-header {
+  padding: 1rem 2rem;
+  background: var(--admin-sidebar);
+  border-bottom: 1px solid var(--admin-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.admin-page-title-group h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #FFF;
+}
+
+.admin-page-title-group p {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.role-switcher-select {
+  background: var(--admin-card);
+  color: var(--admin-gold);
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.btn-store-link {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--admin-border-light);
+  color: #FFF;
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s;
+}
+
+.btn-store-link:hover {
+  background: var(--admin-gold);
+  color: var(--admin-bg);
+}
+
+/* Admin Body Container */
+.admin-content-body {
+  padding: 2rem;
+  flex: 1;
+}
+
+/* ==========================================================================
+   KPI Cards Grid
+   ========================================================================== */
+.kpi-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.kpi-card:hover {
+  border-color: var(--admin-border);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--admin-gold), transparent);
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.kpi-title {
+  font-size: 0.88rem;
+  color: var(--admin-text-muted);
+  font-weight: 600;
+}
+
+.kpi-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--admin-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #FFF;
+  margin-bottom: 0.35rem;
+}
+
+.kpi-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.kpi-trend.positive {
+  color: #4CAF50;
+}
+
+.kpi-trend.warning {
+  color: #FFA726;
+}
+
+/* ==========================================================================
+   Admin Data Tables
+   ========================================================================== */
+.admin-card-section {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border-light);
+  border-radius: 14px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.card-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-section-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 0.92rem;
+}
+
+body.admin-body.ltr .admin-table {
+  text-align: left;
+}
+
+.admin-table th {
+  padding: 1rem 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--admin-text-muted);
+  font-weight: 700;
+  border-bottom: 1px solid var(--admin-border-light);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-table td {
+  padding: 1.1rem;
+  border-bottom: 1px solid var(--admin-border-light);
+  color: var(--admin-text);
+  vertical-align: middle;
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Status Badges */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.badge-status.processing {
+  background: rgba(25, 118, 210, 0.15);
+  color: #42A5F5;
+  border: 1px solid rgba(66, 165, 245, 0.3);
+}
+
+.badge-status.dispatched {
+  background: rgba(239, 108, 0, 0.15);
+  color: #FFA726;
+  border: 1px solid rgba(255, 167, 38, 0.3);
+}
+
+.badge-status.out_for_delivery {
+  background: rgba(156, 39, 176, 0.15);
+  color: #BA68C8;
+  border: 1px solid rgba(186, 104, 200, 0.3);
+}
+
+.badge-status.delivered {
+  background: rgba(46, 125, 50, 0.15);
+  color: #66BB6A;
+  border: 1px solid rgba(102, 187, 106, 0.3);
+}
+
+.badge-status.returned {
+  background: rgba(198, 40, 40, 0.15);
+  color: #EF5350;
+  border: 1px solid rgba(239, 83, 80, 0.3);
+}
+
+/* ==========================================================================
+   ROOH Delivery Logistics Hub Styles
+   ========================================================================== */
+.courier-fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.courier-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--admin-border-light);
+  border-radius: 12px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.courier-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.courier-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--admin-burgundy);
+  border: 1px solid var(--admin-gold);
+  color: var(--admin-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.courier-name {
+  font-weight: 700;
+  color: #FFF;
+  font-size: 0.96rem;
+}
+
+.courier-phone {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+}
+
+.courier-stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.courier-cod-box {
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.courier-cod-title {
+  font-size: 0.75rem;
+  color: var(--admin-gold);
+  margin-bottom: 0.2rem;
+}
+
+.courier-cod-amount {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #FFF;
+}
+
+/* ==========================================================================
+   Interactive Financial Reports & Charts
+   ========================================================================== */
+.financial-summary-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+.canvas-chart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ==========================================================================
+   Inventory Low Stock Alert Banner
+   ========================================================================== */
+.low-stock-alert-box {
+  background: rgba(239, 108, 0, 0.1);
+  border: 1px solid rgba(255, 167, 38, 0.4);
+  border-radius: 10px;
+  padding: 1.1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.low-stock-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: #FFA726;
+  font-weight: 600;
+}
+
+/* Form Styles inside Admin Modals */
+.admin-modal-dialog {
+  background: var(--admin-sidebar);
+  border: 1px solid var(--admin-border);
+  color: #FFF;
+  border-radius: 14px;
+  padding: 2.2rem;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.admin-form-group {
+  margin-bottom: 1.2rem;
+}
+
+.admin-form-label {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--admin-gold);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.admin-form-input, .admin-form-select, .admin-form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border-light);
+  border-radius: 6px;
+  color: #FFF;
+  font-size: 0.92rem;
+  outline: none;
+}
+
+.admin-form-input:focus, .admin-form-select:focus, .admin-form-textarea:focus {
+  border-color: var(--admin-gold);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* Buttons in Admin */
+.btn-admin-gold {
+  background: linear-gradient(135deg, var(--admin-gold-hover), var(--admin-gold));
+  color: var(--admin-bg);
+  font-weight: 700;
+  padding: 0.65rem 1.4rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s;
+}
+
+.btn-admin-gold:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.btn-admin-outline {
+  background: transparent;
+  border: 1px solid var(--admin-border-light);
+  color: var(--admin-text);
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+
+.btn-admin-outline:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--admin-gold);
+  color: var(--admin-gold);
+}
+
+.btn-admin-danger {
+  background: rgba(198, 40, 40, 0.2);
+  border: 1px solid rgba(239, 83, 80, 0.4);
+  color: #EF5350;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-admin-danger:hover {
+  background: #C62828;
+  color: #FFF;
+}
+
+/* Responsive Admin */
+@media (max-width: 1200px) {
+  .kpi-cards-grid, .courier-fleet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .financial-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body.admin-body {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .kpi-cards-grid, .courier-fleet-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-content-body {
+    padding: 1rem;
+  }
+}
+

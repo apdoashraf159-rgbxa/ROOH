@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOH | رُوح — نظام إدارة الأعمال ولوحة التحكم التنفيذية</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@300;400;500;600;700;800;900&family=Cinzel:wght@600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-header">
+      <div class="admin-brand-tag">
+        <img src="assets/images/logo.svg" alt="ROOH" class="admin-logo-small">
+        <div>
+          <div class="admin-brand-title">رُوح | ROOH</div>
+          <div class="admin-brand-sub">إدارة الأعمال والمستودعات</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu Items -->
+    <ul class="admin-nav-menu">
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn active" data-tab="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>لوحة المؤشرات والتحليلات</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span>إدارة وتجهيز الطلبات</span>
+          <span class="admin-badge-alert" id="adminActiveOrdersBadge">4</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="delivery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          <span>أسطول شحن رُوح اللوجستي</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="inventory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>المخزون ومستودعات التوريد</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>كتالوج المنتجات الفاخرة</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="reports">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span>التقارير المالية والضرائب (EGP)</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="partners">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>الشركاء والموردون الاستراتيجيون</span>
+        </button>
+      </li>
+
+      <li class="admin-nav-item">
+        <button class="admin-nav-btn" data-tab="staff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>صلاحيات الموظفين (RBAC)</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Sidebar Profile Footer -->
+    <div class="admin-sidebar-footer">
+      <div class="admin-user-info">
+        <div class="admin-avatar">ش</div>
+        <div>
+          <div class="admin-name">شريف المنشاوي</div>
+          <div class="admin-role-badge" id="adminCurrentRoleTitle">المدير العام والرئيس التنفيذي</div>
+        </div>
+      </div>
+      <a href="index.html" class="header-icon-btn" style="width: 36px; height: 36px;" title="المتجر الرئيسي">
+        <span>🌐</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrap -->
+  <main class="admin-main-wrap">
+    <!-- Admin Top Header -->
+    <header class="admin-header">
+      <div class="admin-page-title-group">
+        <h2>نظام إدارة الأعمال المتكامل — دار رُوح للتجميل والعطور</h2>
+        <p>متابعة العمليات اللوجستية، أسطول شحن رُوح، المبيعات بالجنيه المصري، والمستودعات المركزية.</p>
+      </div>
+
+      <div class="admin-header-actions">
+        <!-- Interactive Role Switcher for Pair Programming Demo -->
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 0.8rem; color: var(--admin-text-muted);">تبديل صلاحية المستخدم (RBAC):</span>
+          <select id="adminRoleSwitcherSelect" class="role-switcher-select">
+            <option value="admin">المدير العام (Super Admin)</option>
+            <option value="manager">مدير العمليات (Operations Manager)</option>
+            <option value="inventory">مسؤول المستودع (Inventory Supervisor)</option>
+            <option value="support">خدمة العملاء (Customer Concierge)</option>
+            <option value="courier">مندوب شحن رُوح (ROOH Delivery Courier)</option>
+          </select>
+        </div>
+
+        <a href="index.html" class="btn-store-link">
+          <span>🛍️</span>
+          <span>زيارة واجهة المتجر</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Dynamic Admin Content Body -->
+    <div class="admin-content-body" id="adminTabContentArea">
+      <!-- Injected via js/admin.js based on active tab -->
+    </div>
+  </main>
+
+  <!-- Generic Admin Modal Backdrop for Products / Restock / Couriers -->
+  <div class="modal-backdrop" id="adminGenericModalBackdrop">
+    <div id="adminGenericModalContainer">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/delivery.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
+

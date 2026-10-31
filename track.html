@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOH Delivery | شحن رُوح — بوابة تتبع الشحنات الملكية</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background: var(--rooh-cream); min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Header -->
+  <header style="background: #FFF; border-bottom: 1px solid var(--rooh-border-light); padding: 1.2rem 0; box-shadow: var(--shadow-sm);">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="index.html" class="brand-logo-wrap">
+        <img src="assets/images/logo.svg" alt="ROOH | رُوح" style="height: 48px;">
+      </a>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="btn-outline-gold" style="padding: 0.5rem 1.2rem; font-size: 0.88rem;">العودة للمتجر ←</a>
+        <a href="admin.html" class="btn-burgundy" style="padding: 0.5rem 1.2rem; font-size: 0.88rem;">لوحة الإدارة</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Track Banner -->
+  <main class="container" style="flex: 1; padding: 4rem 1.5rem; max-width: 860px;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(74, 14, 23, 0.08); border: 1px solid var(--rooh-border); color: var(--rooh-burgundy); padding: 0.35rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.8rem;">
+        <span>🚗</span> أسطول شحن رُوح المستقل (ROOH Delivery)
+      </div>
+      <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--rooh-burgundy-deep); margin-bottom: 0.6rem;">
+        تتبعي شحنتكِ الملكية لحظة بلحظة
+      </h1>
+      <p style="color: var(--rooh-text-muted); font-size: 1rem;">
+        أدخلي رقم بوليصة الشحن لمعرفة مسار الطرد الفاخر ومندوب التوصيل المكلف وتوقيت الوصول التقريبي.
+      </p>
+    </div>
+
+    <!-- Tracking Search Card -->
+    <div style="background: #FFF; border: 1px solid var(--rooh-border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); margin-bottom: 2rem;">
+      <form id="trackPageForm" style="display: flex; gap: 0.75rem; flex-wrap: wrap;" onsubmit="event.preventDefault(); window.trackSearchOrder();">
+        <input type="text" id="trackPageInput" class="form-input" style="flex: 1; padding: 0.9rem 1.4rem; font-size: 1.05rem; font-family: monospace;" placeholder="مثال: ROOH-EGY-98214" value="ROOH-EGY-98214" required>
+        <button type="submit" class="btn-gold" style="padding: 0.9rem 2rem; font-size: 1rem;">
+          <span>🔍</span> تتبع الشحنة
+        </button>
+      </form>
+    </div>
+
+    <!-- Results Display -->
+    <div id="trackingPageResultContainer">
+      <!-- Injected via delivery.js -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background: var(--rooh-black); color: var(--rooh-beige); padding: 2rem 0; text-align: center; font-size: 0.88rem;">
+    <div class="container">
+      © 2026 رُوح | ROOH Delivery Express. خدمة التوصيل السريع والمبرد لكافة أنحاء جمهورية مصر العربية. الخط الساخن: 19842.
+    </div>
+  </footer>
+
+  <script src="js/state.js"></script>
+  <script src="js/delivery.js"></script>
+  <script>
+    function trackSearchOrder() {
+      const code = document.getElementById('trackPageInput').value.trim();
+      const container = document.getElementById('trackingPageResultContainer');
+      const order = window.roohDelivery.trackOrder(code);
+      if (!order) {
+        container.innerHTML = `
+          <div style="background: #FFF; border-radius: 14px; padding: 3rem 1rem; text-align: center; border: 1px solid var(--rooh-sand);">
+            <div style="font-size: 3rem; margin-bottom: 0.8rem;">📦</div>
+            <h3 style="color: var(--rooh-burgundy-deep); margin-bottom: 0.4rem;">لم نتمكن من العثور على الشحنة</h3>
+            <p style="color: var(--rooh-text-muted);">يرجى التأكد من كتابة كود الشحن بشكل صحيح مثل ROOH-EGY-98214.</p>
+          </div>
+        `;
+      } else {
+        window.roohDelivery.renderTrackingTimelineUI(order, container, 'ar');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      trackSearchOrder();
+    });
+  </script>
+</body>
+</html>
+

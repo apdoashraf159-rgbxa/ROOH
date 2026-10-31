@@ -1,0 +1,42 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <radialGradient id="prodBg21" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#FCFAF7"/>
+      <stop offset="70%" stop-color="#EDE5D8"/>
+      <stop offset="100%" stop-color="#D8CBBA"/>
+    </radialGradient>
+    <linearGradient id="goldSheen21" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEAB8"/>
+      <stop offset="35%" stop-color="#D4AF37"/>
+      <stop offset="70%" stop-color="#FFF2CE"/>
+      <stop offset="100%" stop-color="#9C721A"/>
+    </linearGradient>
+    <linearGradient id="liquidGrad21" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#121214"/>
+      <stop offset="50%" stop-color="#24242A"/>
+      <stop offset="100%" stop-color="#121214"/>
+    </linearGradient>
+    <filter id="softShadow21" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#2D1115" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="600" fill="url(#prodBg21)"/>
+  <ellipse cx="300" cy="510" rx="200" ry="30" fill="#BCAE9C" opacity="0.4" filter="blur(10px)"/>
+  <ellipse cx="300" cy="505" rx="150" ry="18" fill="#3D181D" opacity="0.16" filter="blur(6px)"/>
+  <circle cx="300" cy="270" r="160" fill="none" stroke="#D4AF37" stroke-width="0.8" opacity="0.15" stroke-dasharray="3 4"/>
+  <circle cx="300" cy="270" r="135" fill="none" stroke="#D4AF37" stroke-width="0.5" opacity="0.1"/>  <g filter="url(#softShadow21)">
+    <rect x="264" y="90" width="72" height="58" rx="4" fill="url(#goldSheen21)"/>
+    <rect x="272" y="98" width="56" height="42" rx="2" fill="#25060A"/>
+    <circle cx="300" cy="119" r="11" fill="url(#goldSheen21)"/>
+    <rect x="282" y="148" width="36" height="26" fill="url(#goldSheen21)"/>
+    <path d="M210 174 L390 174 L375 450 C372 470 355 482 335 482 L265 482 C245 482 228 470 225 450 Z" fill="url(#liquidGrad21)" opacity="0.92"/>
+    <path d="M232 188 L368 188 L354 445 C352 455 342 464 330 464 L270 464 C258 464 248 455 246 445 Z" fill="#FFF" opacity="0.12"/>
+    <rect x="245" y="255" width="110" height="145" rx="3" fill="#151314" stroke="url(#goldSheen21)" stroke-width="1.5"/>
+    <rect x="249" y="259" width="102" height="137" rx="2" fill="none" stroke="url(#goldSheen21)" stroke-width="0.5"/>
+    <text x="300" y="286" font-family="'Cinzel', serif" font-size="13" font-weight="700" letter-spacing="4" fill="url(#goldSheen21)" text-anchor="middle">ROOH</text>
+    <text x="300" y="312" font-family="'Cinzel', serif" font-size="9" font-weight="700" fill="#FFF" text-anchor="middle">Misk Al Layl Unisex EDP</text>
+    <text x="300" y="336" font-family="'Cinzel', serif" font-size="8" font-weight="600" letter-spacing="1.5" fill="#D4AF37" text-anchor="middle">PARFUM INTENSE</text>
+    <text x="300" y="370" font-family="'Montserrat', sans-serif" font-size="8" fill="#E8D8CE" opacity="0.8" text-anchor="middle">100 ML</text>
+  </g>  <text x="300" y="570" font-family="'Cinzel', serif" font-size="10" letter-spacing="4" fill="#938276" text-anchor="middle">ROOH BEAUTE - CAIRO &amp; PARIS</text>
+</svg>
