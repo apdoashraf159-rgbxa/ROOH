@@ -1,275 +1,632 @@
 /**
- * ROOH | رُوح — Storefront Controller & Customer Experience
- * Full E-Commerce operations, Arabic RTL / English LTR, EGP Currency
+ * ROOH Cosmetics - Official Public Website & Souq ROOH E-Commerce Platform
+ * Enhanced Production Version
  */
 
-class RoohStorefrontApp {
+class RoohCart {
   constructor() {
-    this.store = window.roohStore;
-    this.currentCategory = 'all';
-    this.currentSubcategory = 'all';
-    this.searchQuery = '';
-    this.selectedGovernorate = 'cairo';
-    this.selectedPaymentMethod = 'cod';
-    this.activeProductModalId = null;
-    this.activeModalTab = 'desc';
-    this.activeModalQty = 1;
+    this.storageKey = 'rooh_shopping_cart';
+    this.items = this.load();
+    this.couponDiscount = 0;
+    this.couponCode = '';
+    this.selectedGovernorate = 'القاهرة';
+    this.shippingFee = 45;
   }
 
-  init() {
-    this.bindEvents();
-    this.applyLanguage();
-    this.renderCatalog();
-    this.updateCartBadge();
-    this.updateWishlistBadge();
-    if (window.roohConcierge) window.roohConcierge.initUI();
+  load() {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
 
-    // Subscribe to state changes
-    this.store.subscribe(() => {
-      this.updateCartBadge();
-      this.updateWishlistBadge();
+  save() {
+    localStorage.setItem(this.storageKey, JSON.stringify(this.items));
+    this.updateCounters();
+  }
+
+  addItem(item) {
+    const existing = this.items.find(i => 
+      i.product_id === item.product_id && 
+      JSON.stringify(i.customization) === JSON.stringify(item.customization)
+    );
+
+    if (existing) {
+      existing.qty += (item.qty || 1);
+      existing.total_price = existing.qty * existing.unit_price;
+    } else {
+      this.items.push({
+        product_id: item.product_id,
+        name: item.name,
+        sku: item.sku,
+        qty: item.qty || 1,
+        unit_price: item.unit_price,
+        unit_cost: item.unit_cost || (item.unit_price * 0.3),
+        total_price: (item.qty || 1) * item.unit_price,
+        customization: item.customization || null,
+        image: item.image || 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=300&q=80'
+      });
+    }
+    this.save();
+    this.renderDrawer();
+  }
+
+  removeItem(index) {
+    this.items.splice(index, 1);
+    this.save();
+    this.renderDrawer();
+  }
+
+  updateQty(index, delta) {
+    if (!this.items[index]) return;
+    this.items[index].qty += delta;
+    if (this.items[index].qty <= 0) {
+      this.removeItem(index);
+      return;
+    }
+    this.items[index].total_price = this.items[index].qty * this.items[index].unit_price;
+    this.save();
+    this.renderDrawer();
+  }
+
+  getSubtotal() {
+    return this.items.reduce((sum, item) => sum + item.total_price, 0);
+  }
+
+  getTotal() {
+    const sub = this.getSubtotal();
+    // Free shipping if over 750 EGP
+    const actualShipping = sub >= 750 || sub === 0 ? 0 : this.shippingFee;
+    return Math.max(0, sub - this.couponDiscount + actualShipping);
+  }
+
+  updateCounters() {
+    const totalCount = this.items.reduce((sum, item) => sum + item.qty, 0);
+    document.querySelectorAll('.cart-badge-count').forEach(el => {
+      el.textContent = totalCount;
+      el.style.display = totalCount > 0 ? 'inline-flex' : 'none';
     });
+  }
+
+  openDrawer() {
+    const drawer = document.getElementById('cartDrawer');
+    const overlay = document.getElementById('cartOverlay');
+    if (drawer && overlay) {
+      this.renderDrawer();
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+    }
+  }
+
+  closeDrawer() {
+    const drawer = document.getElementById('cartDrawer');
+    const overlay = document.getElementById('cartOverlay');
+    if (drawer && overlay) {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+  }
+
+  renderDrawer() {
+    const body = document.getElementById('cartDrawerBody');
+    const footer = document.getElementById('cartDrawerFooter');
+    if (!body || !footer) return;
+
+    if (this.items.length === 0) {
+      body.innerHTML = `
+        <div style="text-align:center; padding:50px 20px;">
+          <div style="font-size:3.5rem; margin-bottom:12px; opacity:0.6;">🛍️</div>
+          <h4 style="font-size:1.1rem; color:var(--rooh-dark); margin-bottom:6px;">حقيبة التسوق فارغة</h4>
+          <p style="font-size:0.85rem; color:var(--rooh-muted);">تصفحي تشكيلة مستحضرات روح الفاخرة وأضيفي ما يناسب جمالكِ</p>
+          <button class="btn-rooh btn-rooh-primary btn-rooh-sm" style="margin-top:16px;" onclick="window.roohCart.closeDrawer(); window.location.hash='#store'">
+            تسوقي الآن في سوق روح
+          </button>
+        </div>
+      `;
+      footer.style.display = 'none';
+      return;
+    }
+
+    footer.style.display = 'block';
+    body.innerHTML = this.items.map((item, idx) => `
+      <div class="cart-item">
+        <img src="${item.image}" alt="${item.name}" class="cart-item-img" />
+        <div class="cart-item-info">
+          <div>
+            <div class="cart-item-title">${item.name}</div>
+            ${item.customization ? `
+              <div class="cart-item-custom-notes">
+                ✨ مخصص: ${item.customization.type} | "${item.customization.custom_label || 'تركيبة خاصة'}"
+              </div>
+            ` : ''}
+          </div>
+          <div class="cart-qty-row">
+            <div class="qty-control">
+              <button class="qty-btn" onclick="window.roohCart.updateQty(${idx}, -1)">-</button>
+              <span class="qty-display">${item.qty}</span>
+              <button class="qty-btn" onclick="window.roohCart.updateQty(${idx}, 1)">+</button>
+            </div>
+            <div style="font-weight:700; color:var(--rooh-dark);">
+              ${window.RoohUtil.formatCurrency(item.total_price)}
+            </div>
+          </div>
+        </div>
+        <button onclick="window.roohCart.removeItem(${idx})" style="color:var(--rooh-muted); font-size:1.1rem; padding:4px;" title="حذف">&times;</button>
+      </div>
+    `).join('');
+
+    const sub = this.getSubtotal();
+    const isFreeShip = sub >= 750;
+    const ship = isFreeShip ? 0 : this.shippingFee;
+    const tot = this.getTotal();
+
+    footer.innerHTML = `
+      <div class="cart-summary-line">
+        <span>المجموع الفرعي:</span>
+        <span>${window.RoohUtil.formatCurrency(sub)}</span>
+      </div>
+      ${this.couponDiscount > 0 ? `
+        <div class="cart-summary-line" style="color:var(--rooh-success);">
+          <span>خصم الكوبون (${this.couponCode}):</span>
+          <span>-${window.RoohUtil.formatCurrency(this.couponDiscount)}</span>
+        </div>
+      ` : ''}
+      <div class="cart-summary-line">
+        <span>الشحن المقدر:</span>
+        <span>${isFreeShip ? '<strong style="color:var(--rooh-success);">مجاني (عرض خاص)</strong>' : window.RoohUtil.formatCurrency(ship)}</span>
+      </div>
+      ${!isFreeShip ? `
+        <div style="font-size:0.75rem; color:var(--rooh-gold-hover); margin-bottom:8px; text-align:center;">
+          أضيفي منتجات بقيمة ${750 - sub} ج.م إضافية لتحصلي على <strong>شحن مجاني</strong>!
+        </div>
+      ` : ''}
+      <div class="cart-total-line">
+        <span>الإجمالي النهائي:</span>
+        <span style="color:var(--rooh-gold);">${window.RoohUtil.formatCurrency(tot)}</span>
+      </div>
+      <button class="btn-rooh btn-rooh-primary" style="width:100%; margin-top:16px;" onclick="window.roohApp.openCheckoutModal()">
+        <span>إتمام الطلب والدفع</span>
+        <span>💳</span>
+      </button>
+    `;
+  }
+}
+
+class RoohApp {
+  constructor() {
+    this.currentCategory = 'all';
+    this.currentSearch = '';
+    this.lang = 'ar';
+    this.governorates = [];
+    this.currentCustomer = this.loadCustomer();
+  }
+
+  loadCustomer() {
+    try {
+      const raw = localStorage.getItem('rooh_customer');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  saveCustomer(cust) {
+    this.currentCustomer = cust;
+    if (cust) {
+      localStorage.setItem('rooh_customer', JSON.stringify(cust));
+    } else {
+      localStorage.removeItem('rooh_customer');
+    }
+    this.renderCustomerHeader();
+  }
+
+  async init() {
+    window.roohCart = new RoohCart();
+    window.roohCart.updateCounters();
+
+    // Inject Dynamic Theme Colors if saved by Admin
+    await this.applyThemeColors();
+    await this.applyCustomSettings();
+
+    // Load Shipping Governorates (All 27 in exact order)
+    this.governorates = await window.roohDB.getGovernorates();
+
+    // Render Components
+    this.renderCustomerHeader();
+    await this.renderWebsiteSections();
+    await this.renderCategoriesBar();
+    await this.renderProducts();
+    await this.renderReviewsSection();
+
+    // Initialize customizer & AI assistant
+    if (window.roohCustomizer) await window.roohCustomizer.init();
+    if (window.roohChatbot) window.roohChatbot.init();
+
+    this.bindEvents();
+    this.handleRouting();
+    window.addEventListener('hashchange', () => this.handleRouting());
+
+    // Listen to real-time Admin Saves across tabs / windows
+    window.addEventListener('storage', async (e) => {
+      if (e.key === 'rooh_local_database_v2' || e.key === 'rooh_db_updated') {
+        await this.applyThemeColors();
+        await this.applyCustomSettings();
+        await this.renderWebsiteSections();
+        await this.renderCategoriesBar();
+        await this.renderProducts();
+      }
+    });
+  }
+
+  async applyThemeColors() {
+    try {
+      const themes = await window.roohDB.getThemeColors();
+      if (themes) {
+        const root = document.documentElement;
+        if (themes.site?.primary) root.style.setProperty('--rooh-gold', themes.site.primary);
+        if (themes.site?.primary_dark) root.style.setProperty('--rooh-gold-hover', themes.site.primary_dark);
+        if (themes.site?.bg_dark) root.style.setProperty('--rooh-dark', themes.site.bg_dark);
+        if (themes.site?.bg_light) root.style.setProperty('--rooh-cream', themes.site.bg_light);
+
+        // Unified background color across site & store
+        const unifiedBg = themes.unified_bg || themes.site?.background;
+        if (unifiedBg) {
+          root.style.setProperty('--rooh-cream', unifiedBg);
+          document.body.style.backgroundColor = unifiedBg;
+        }
+
+        // Botanical Nature Motif Overlays
+        let overlayEl = document.getElementById('siteNatureOverlay');
+        if (!overlayEl) {
+          overlayEl = document.createElement('div');
+          overlayEl.id = 'siteNatureOverlay';
+          overlayEl.className = 'site-nature-overlay';
+          document.body.appendChild(overlayEl);
+        }
+
+        const motif = themes.motif || 'none';
+        overlayEl.className = `site-nature-overlay ${motif !== 'none' ? 'motif-' + motif : ''}`;
+        overlayEl.style.opacity = themes.motif_opacity || 0.12;
+      }
+    } catch (e) {
+      console.warn('Could not apply theme colors:', e);
+    }
+  }
+
+  async applyCustomSettings() {
+    try {
+      const settings = await window.roohDB.getSettings();
+      if (!settings) return;
+
+      // Announcement Bar
+      if (settings.top_announcement) {
+        const annEl = document.querySelector('.top-announcement');
+        if (annEl) annEl.textContent = settings.top_announcement;
+      }
+
+      // Brand Logo
+      if (settings.brand_logo) {
+        const logoMark = document.querySelector('.brand-logo-mark');
+        if (logoMark) {
+          logoMark.innerHTML = `<img src="${settings.brand_logo}" alt="Logo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+        }
+      }
+
+      // Brand Name & Subtext
+      if (settings.brand_name_ar) {
+        const nameEl = document.querySelector('.brand-name');
+        if (nameEl) nameEl.textContent = settings.brand_name_ar;
+      }
+      if (settings.brand_subtext) {
+        const subEl = document.querySelector('.brand-subtext');
+        if (subEl) subEl.textContent = settings.brand_subtext;
+      }
+
+      // Hero Titles
+      if (settings.hero_title) {
+        const titleEl = document.getElementById('heroDynamicTitle');
+        if (titleEl) titleEl.innerHTML = settings.hero_title;
+      }
+      if (settings.hero_desc) {
+        const subEl = document.getElementById('heroDynamicSubtitle');
+        if (subEl) subEl.textContent = settings.hero_desc;
+      }
+
+      // Hero Button Texts
+      if (settings.btn_store_text) {
+        const btnStore = document.querySelector('.hero-cta .btn-rooh-primary');
+        if (btnStore && btnStore.childNodes[0]) {
+          btnStore.childNodes[0].textContent = settings.btn_store_text + ' ';
+        }
+      }
+      if (settings.btn_lab_text) {
+        const btnLab = document.querySelector('.hero-cta .btn-rooh-outline');
+        if (btnLab && btnLab.childNodes[0]) {
+          btnLab.childNodes[0].textContent = settings.btn_lab_text + ' ';
+        }
+      }
+
+      // Story Mission
+      if (settings.story_mission) {
+        const missionEl = document.getElementById('storyDynamicMission');
+        if (missionEl) missionEl.textContent = settings.story_mission;
+      }
+    } catch (e) {
+      console.warn('Could not apply custom settings:', e);
+    }
+  }
+
+  renderCustomerHeader() {
+    const navBtn = document.getElementById('customerAccountBtn');
+    const nameEl = document.getElementById('customerNavName');
+    if (!nameEl) return;
+
+    if (this.currentCustomer) {
+      const firstName = this.currentCustomer.name.split(' ')[0] || 'حسابي';
+      nameEl.textContent = `أهلاً، ${firstName}`;
+      if (navBtn) {
+        navBtn.style.background = 'rgba(191,161,95,0.2)';
+        navBtn.style.borderColor = 'var(--rooh-gold)';
+      }
+    } else {
+      nameEl.textContent = 'حسابي';
+      if (navBtn) {
+        navBtn.style.background = 'rgba(191,161,95,0.1)';
+      }
+    }
   }
 
   bindEvents() {
-    // Language Switcher
-    const langBtn = document.getElementById('langSwitchBtn');
-    if (langBtn) {
-      langBtn.addEventListener('click', () => this.toggleLanguage());
-    }
+    // Customer Account Trigger
+    document.getElementById('customerAccountBtn')?.addEventListener('click', () => {
+      this.openCustomerModal();
+    });
 
-    // Role Switcher Pill
-    const rolePill = document.getElementById('roleSelectorPill');
-    if (rolePill) {
-      rolePill.addEventListener('click', () => {
-        window.location.href = 'admin.html';
-      });
-    }
-
-    // Search bar
-    const searchInput = document.getElementById('mainSearchInput');
+    // Search input debounce
+    const searchInput = document.getElementById('storeSearchInput');
     if (searchInput) {
+      let debounceTimeout;
       searchInput.addEventListener('input', (e) => {
-        this.searchQuery = e.target.value.trim();
-        this.renderCatalog();
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+          this.currentSearch = e.target.value.trim();
+          this.renderProducts();
+        }, 300);
       });
     }
-
-    // Category filter pills
-    document.querySelectorAll('.filter-tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        this.currentCategory = e.currentTarget.getAttribute('data-category') || 'all';
-        this.currentSubcategory = 'all';
-        this.renderCatalog();
-      });
-    });
-
-    // Category Navigation Menu links
-    document.querySelectorAll('.category-nav-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const cat = e.currentTarget.getAttribute('data-category');
-        this.currentCategory = cat;
-        this.currentSubcategory = 'all';
-        
-        // Update filter tabs
-        document.querySelectorAll('.filter-tab-btn').forEach(b => {
-          b.classList.toggle('active', b.getAttribute('data-category') === cat);
-        });
-
-        this.renderCatalog();
-        const catalogEl = document.getElementById('catalogSection');
-        if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
-      });
-    });
 
     // Cart Drawer Toggle
-    const cartToggleBtn = document.getElementById('cartDrawerOpenBtn');
-    const cartCloseBtn = document.getElementById('cartDrawerCloseBtn');
-    const cartBackdrop = document.getElementById('cartDrawerBackdrop');
+    document.getElementById('cartOpenBtn')?.addEventListener('click', () => window.roohCart.openDrawer());
+    document.getElementById('cartCloseBtn')?.addEventListener('click', () => window.roohCart.closeDrawer());
+    document.getElementById('cartOverlay')?.addEventListener('click', () => window.roohCart.closeDrawer());
 
-    if (cartToggleBtn) cartToggleBtn.addEventListener('click', () => this.openCartDrawer());
-    if (cartCloseBtn) cartCloseBtn.addEventListener('click', () => this.closeCartDrawer());
-    if (cartBackdrop) {
-      cartBackdrop.addEventListener('click', (e) => {
-        if (e.target === cartBackdrop) this.closeCartDrawer();
-      });
-    }
-
-    // Product Modal Backdrop Close
-    const prodModalBackdrop = document.getElementById('productDetailModalBackdrop');
-    const prodModalClose = document.getElementById('productDetailModalCloseBtn');
-    if (prodModalClose) prodModalClose.addEventListener('click', () => this.closeProductModal());
-    if (prodModalBackdrop) {
-      prodModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === prodModalBackdrop) this.closeProductModal();
-      });
-    }
-
-    // Checkout Modal Backdrop & Close
-    const checkoutBackdrop = document.getElementById('checkoutModalBackdrop');
-    const checkoutClose = document.getElementById('checkoutModalCloseBtn');
-    const checkoutOpenBtn = document.getElementById('proceedToCheckoutBtn');
-
-    if (checkoutOpenBtn) checkoutOpenBtn.addEventListener('click', () => this.openCheckoutModal());
-    if (checkoutClose) checkoutClose.addEventListener('click', () => this.closeCheckoutModal());
-    if (checkoutBackdrop) {
-      checkoutBackdrop.addEventListener('click', (e) => {
-        if (e.target === checkoutBackdrop) this.closeCheckoutModal();
-      });
-    }
-
-    // Quick Tracking Search Form on Homepage
-    const trackForm = document.getElementById('homepageTrackingForm');
-    if (trackForm) {
-      trackForm.addEventListener('submit', (e) => {
+    // Complaints form submit
+    const complaintForm = document.getElementById('complaintForm');
+    if (complaintForm) {
+      complaintForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const input = document.getElementById('homepageTrackCodeInput');
-        if (input && input.value.trim()) {
-          this.openTrackingModal(input.value.trim());
-        }
+        const data = {
+          customer_name: document.getElementById('cmpName').value,
+          phone: document.getElementById('cmpPhone').value,
+          order_number: document.getElementById('cmpOrderNum').value,
+          category: document.getElementById('cmpCategory').value,
+          details: document.getElementById('cmpDetails').value
+        };
+        const created = await window.roohDB.submitComplaint(data);
+        window.RoohUtil.showToast(`تم تسجيل الشكوى بنجاح برقم (${created.id}). سيتواصل معكِ الأستاذ عبدالرحمن أو فريق الدعم الفني خلال ساعات!`, 'success');
+        complaintForm.reset();
       });
     }
 
-    // Tracking Modal Close
-    const trackModalBackdrop = document.getElementById('trackingModalBackdrop');
-    const trackModalClose = document.getElementById('trackingModalCloseBtn');
-    if (trackModalClose) trackModalClose.addEventListener('click', () => this.closeTrackingModal());
-    if (trackModalBackdrop) {
-      trackModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === trackModalBackdrop) this.closeTrackingModal();
-      });
-    }
-
-    // Wishlist Drawer / Open
-    const wishlistBtn = document.getElementById('wishlistOpenBtn');
-    if (wishlistBtn) {
-      wishlistBtn.addEventListener('click', () => this.openWishlistModal());
-    }
-
-    const wishlistBackdrop = document.getElementById('wishlistModalBackdrop');
-    const wishlistClose = document.getElementById('wishlistModalCloseBtn');
-    if (wishlistClose) wishlistClose.addEventListener('click', () => this.closeWishlistModal());
-    if (wishlistBackdrop) {
-      wishlistBackdrop.addEventListener('click', (e) => {
-        if (e.target === wishlistBackdrop) this.closeWishlistModal();
+    // Review form submit
+    const reviewForm = document.getElementById('submitReviewForm');
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+          customer_name: document.getElementById('revCustomerName').value,
+          rating: Number(document.getElementById('revRatingSelect').value) || 5,
+          title: document.getElementById('revTitle').value,
+          comment: document.getElementById('revComment').value,
+          verified_purchase: true
+        };
+        await window.roohDB.submitReview(data);
+        window.RoohUtil.showToast('شكراً لمشاركتكِ رأيكِ القيّم! تم نشر تقييمكِ في مجتمع عملاء روح.', 'success');
+        reviewForm.reset();
+        document.getElementById('reviewModal')?.classList.remove('open');
+        this.renderReviewsSection();
       });
     }
   }
 
-  // Toggle Language between Arabic and English
-  toggleLanguage() {
-    const newLang = this.store.data.settings.currentLang === 'ar' ? 'en' : 'ar';
-    this.store.data.settings.currentLang = newLang;
-    this.store.saveState();
-    this.applyLanguage();
-    this.renderCatalog();
-    this.renderCartItems();
-    if (this.activeProductModalId) this.openProductModal(this.activeProductModalId);
-  }
+  handleRouting() {
+    const hash = window.location.hash || '#home';
 
-  applyLanguage() {
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    document.body.classList.toggle('ltr', !isAr);
-    document.documentElement.lang = isAr ? 'ar' : 'en';
-    document.documentElement.dir = isAr ? 'rtl' : 'ltr';
-
-    const langBtnText = document.getElementById('langSwitchBtnText');
-    if (langBtnText) langBtnText.textContent = isAr ? 'English' : 'العربية';
-
-    // Update static i18n text tags
-    document.querySelectorAll('[data-i18n-ar]').forEach(el => {
-      const textAr = el.getAttribute('data-i18n-ar');
-      const textEn = el.getAttribute('data-i18n-en') || textAr;
-      el.textContent = isAr ? textAr : textEn;
+    // Update active navbar links
+    document.querySelectorAll('.nav-item').forEach(item => {
+      const link = item.querySelector('a');
+      if (link && link.getAttribute('href') === hash) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
     });
 
-    document.querySelectorAll('[data-i18n-placeholder-ar]').forEach(el => {
-      const plAr = el.getAttribute('data-i18n-placeholder-ar');
-      const plEn = el.getAttribute('data-i18n-placeholder-en') || plAr;
-      el.placeholder = isAr ? plAr : plEn;
-    });
+    if (hash === '#store') {
+      const storeEl = document.getElementById('store');
+      if (storeEl) storeEl.scrollIntoView({ behavior: 'smooth' });
+    } else if (hash === '#customizer') {
+      const customEl = document.getElementById('customizer');
+      if (customEl) customEl.scrollIntoView({ behavior: 'smooth' });
+    } else if (hash === '#about') {
+      const aboutEl = document.getElementById('about');
+      if (aboutEl) aboutEl.scrollIntoView({ behavior: 'smooth' });
+    } else if (hash === '#reviews') {
+      const revEl = document.getElementById('reviews');
+      if (revEl) revEl.scrollIntoView({ behavior: 'smooth' });
+    } else if (hash === '#support') {
+      const supEl = document.getElementById('support');
+      if (supEl) supEl.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
-  // --- Catalog Rendering ---
-  renderCatalog() {
-    const grid = document.getElementById('productsGridContainer');
+  async renderWebsiteSections() {
+    const sections = await window.roohDB.getBuilderSections();
+    const heroSec = sections.find(s => s.type === 'hero');
+    if (heroSec) {
+      const titleEl = document.getElementById('heroDynamicTitle');
+      const subEl = document.getElementById('heroDynamicSubtitle');
+      if (titleEl && heroSec.title_ar) titleEl.innerHTML = heroSec.title_ar;
+      if (subEl && heroSec.subtitle_ar) subEl.textContent = heroSec.subtitle_ar;
+    }
+
+    const storySec = sections.find(s => s.type === 'story');
+    if (storySec) {
+      const storyDesc = document.getElementById('storyDynamicDesc');
+      const storyMission = document.getElementById('storyDynamicMission');
+      const storyVision = document.getElementById('storyDynamicVision');
+      if (storyDesc && storySec.desc_ar) storyDesc.textContent = storySec.desc_ar;
+      if (storyMission && storySec.mission_ar) storyMission.textContent = storySec.mission_ar;
+      if (storyVision && storySec.vision_ar) storyVision.textContent = storySec.vision_ar;
+    }
+  }
+
+  async renderCategoriesBar() {
+    const cats = await window.roohDB.getCategories();
+    const container = document.getElementById('categorySubnav');
+    if (!container) return;
+
+    container.innerHTML = `
+      <li class="subnav-item">
+        <button class="subnav-link ${this.currentCategory === 'all' ? 'active' : ''}" onclick="window.roohApp.filterCategory('all')">
+          <span>✨</span>
+          <span>جميع المنتجات</span>
+        </button>
+      </li>
+      ${cats.map(c => `
+        <li class="subnav-item">
+          <button class="subnav-link ${c.id === 'customizer' ? 'special-lab' : ''} ${this.currentCategory === c.id ? 'active' : ''}" onclick="window.roohApp.filterCategory('${c.id}')">
+            <span>${c.icon}</span>
+            <span>${c.name_ar}</span>
+          </button>
+        </li>
+      `).join('')}
+    `;
+  }
+
+  filterCategory(catId) {
+    if (catId === 'customizer') {
+      window.location.hash = '#customizer';
+      return;
+    }
+    this.currentCategory = catId;
+    this.renderCategoriesBar();
+    this.renderProducts();
+
+    // Smooth scroll to store section
+    const storeEl = document.getElementById('store');
+    if (storeEl) {
+      storeEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  async renderProducts() {
+    const grid = document.getElementById('productsGrid');
     if (!grid) return;
 
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-    
-    let products = this.store.searchProducts(this.searchQuery, this.currentCategory);
-    if (this.currentSubcategory !== 'all') {
-      products = products.filter(p => p.subcategory === this.currentSubcategory);
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--rooh-muted);">جاري تحميل تشكيلة مستحضرات روح الفاخرة...</div>`;
+
+    let products = await window.roohDB.getProducts(this.currentCategory, this.currentSearch);
+    const allCategories = await window.roohDB.getCategories();
+    const currentCatObj = allCategories.find(c => c.id === this.currentCategory);
+
+    // Filter specials
+    if (this.currentCategory === 'special_offers') {
+      products = products.filter(p => p.original_price > p.price);
+    } else if (this.currentCategory === 'best_sellers') {
+      products = products.filter(p => p.is_bestseller);
+    } else if (this.currentCategory === 'new_arrivals') {
+      products = products.filter(p => p.is_new);
+    }
+
+    let categoryHeaderHtml = '';
+    if (this.currentCategory && this.currentCategory !== 'all') {
+      const catTitle = currentCatObj ? currentCatObj.name_ar : (this.currentCategory === 'special_offers' ? 'العروض الخاصة' : (this.currentCategory === 'best_sellers' ? 'الأكثر طلباً' : 'وصل حديثاً'));
+      const catIcon = currentCatObj ? currentCatObj.icon : '✨';
+      categoryHeaderHtml = `
+        <div style="grid-column:1/-1; background:#FFF; border:1px solid rgba(191,161,95,0.4); border-radius:14px; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; box-shadow:var(--rooh-shadow-sm); margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.6rem;">${catIcon}</span>
+            <div>
+              <h3 style="font-family:var(--rooh-font-serif); font-size:1.25rem; color:var(--rooh-dark); margin:0;">
+                قسم: ${catTitle}
+              </h3>
+              <span style="font-size:0.8rem; color:var(--rooh-muted);">متوفر ${products.length} مستحضر ملكي في هذا القسم</span>
+            </div>
+          </div>
+          <button class="btn-rooh btn-rooh-outline btn-rooh-sm" onclick="window.roohApp.filterCategory('all')" style="font-size:0.82rem; padding:6px 14px;">
+            <span>عرض كافة الأقسام (الكل) ✕</span>
+          </button>
+        </div>
+      `;
     }
 
     if (products.length === 0) {
       grid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
-          <h3 style="font-size: 1.4rem; color: var(--rooh-burgundy-deep); margin-bottom: 0.5rem;">
-            ${isAr ? 'لم نعثر على نتائج مطابقة لبحثكِ' : 'No matching products found'}
-          </h3>
-          <p style="color: var(--rooh-text-muted);">
-            ${isAr ? 'جرّبي البحث باسم منتج آخر أو تصفح كل المجموعات الفاخرة.' : 'Try a different keyword or browse all luxury collections.'}
-          </p>
+        ${categoryHeaderHtml}
+        <div style="grid-column:1/-1; text-align:center; padding:50px 20px;">
+          <div style="font-size:3rem; margin-bottom:12px;">🔍</div>
+          <h4 style="font-size:1.2rem; color:var(--rooh-dark);">لم نجد مستحضرات في هذا القسم حالياً</h4>
+          <p style="font-size:0.9rem; color:var(--rooh-muted);">يمكنك تصفح باقي أقسام المتجر الملكية</p>
+          <button class="btn-rooh btn-rooh-primary btn-rooh-sm" style="margin-top:14px;" onclick="window.roohApp.filterCategory('all')">عرض جميع المنتجات</button>
         </div>
       `;
       return;
     }
 
-    grid.innerHTML = products.map(prod => {
-      const title = isAr ? prod.nameAr : prod.nameEn;
-      const catObj = this.store.data.categories.find(c => c.id === prod.category);
-      const catName = catObj ? (isAr ? catObj.nameAr : catObj.nameEn) : prod.category;
-      const badge = isAr ? prod.badge : (prod.badgeEn || prod.badge);
-      const discount = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100);
-      const isWishlisted = this.store.isInWishlist(prod.id);
+    grid.innerHTML = categoryHeaderHtml + products.map(p => {
+      const hasDiscount = p.original_price > p.price;
+      const discountPct = hasDiscount ? Math.round(((p.original_price - p.price) / p.original_price) * 100) : 0;
 
       return `
-        <div class="product-card" data-product-id="${prod.id}">
-          ${badge ? `<span class="product-card-badge">${badge}</span>` : ''}
-          <button class="product-card-wishlist-btn ${isWishlisted ? 'active' : ''}" 
-                  onclick="event.stopPropagation(); window.roohApp.toggleWishlist(${prod.id}, this)">
-            ${isWishlisted ? '♥' : '♡'}
-          </button>
-          
-          <div class="product-card-img-wrap" onclick="window.roohApp.openProductModal(${prod.id})">
-            <img class="product-card-img" src="${prod.image}" alt="${title}" loading="lazy">
-            <div class="product-quick-view-overlay">
-              <span class="btn-quick-view">
-                <span>👁</span> ${isAr ? 'نظرة سريعة' : 'Quick View'}
-              </span>
+        <div class="product-card">
+          <div class="product-thumb-wrap">
+            <img src="${p.image}" alt="${p.name_ar}" loading="lazy" />
+            <div class="product-badges">
+              ${p.is_bestseller ? '<span class="badge-tag tag-bestseller">الأكثر طلباً 👑</span>' : ''}
+              ${p.is_new ? '<span class="badge-tag tag-new">وصل حديثاً 🌟</span>' : ''}
+              ${hasDiscount ? `<span class="badge-tag tag-discount">خصم ${discountPct}%</span>` : ''}
+            </div>
+            <div class="product-quick-actions">
+              <button class="btn-rooh btn-rooh-primary btn-rooh-sm" onclick="window.roohApp.quickAddToCart('${p.id}')">
+                <span>أضف للسلة</span>
+                <span>🛒</span>
+              </button>
+              <button class="btn-rooh btn-rooh-outline btn-rooh-sm" style="background:#FFF;" onclick="window.roohApp.openProductModal('${p.id}')">
+                <span>التفاصيل</span>
+                <span>👁️</span>
+              </button>
             </div>
           </div>
-
-          <div class="product-card-content">
-            <span class="product-card-category">${catName}</span>
-            <h3 class="product-card-title" onclick="window.roohApp.openProductModal(${prod.id})">${title}</h3>
-            
-            <div class="product-card-rating">
-              <div class="rating-stars">★★★★★</div>
-              <span>${prod.rating}</span>
-              <span>(${prod.reviewCount})</span>
+          <div class="product-content">
+            <span class="product-category" style="cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-weight:700; color:var(--rooh-gold);" onclick="event.stopPropagation(); window.roohApp.filterCategory('${p.category_id}')" title="انقر لتصفح قسم ${p.category_name_ar || ''}">
+              <span>🏷️</span>
+              <span>${p.category_name_ar || 'مستحضرات تجميل'}</span>
+            </span>
+            <h3 class="product-name" title="${p.name_ar}">${p.name_ar}</h3>
+            <div class="product-rating">
+              <span>★ ${p.rating}</span>
+              <span class="review-count">(${p.review_count} تقييم)</span>
             </div>
-
-            <div class="product-card-price-row">
-              <span class="price-current">${prod.price.toLocaleString()} ${currency}</span>
-              ${prod.originalPrice > prod.price ? `
-                <span class="price-original">${prod.originalPrice.toLocaleString()} ${currency}</span>
-                <span class="price-discount-pill">-${discount}%</span>
-              ` : ''}
-            </div>
-
-            <div class="product-card-actions">
-              <button class="btn-add-to-cart" onclick="window.roohApp.addToCart(${prod.id})">
-                <span>🛍</span> ${isAr ? 'أضيفي للسلة' : 'Add to Cart'}
-              </button>
-              <button class="btn-buy-now" onclick="window.roohApp.buyNow(${prod.id})">
-                ${isAr ? 'شراء فوري' : 'Buy Now'}
+            <div class="product-price-row">
+              <div class="price-box">
+                <span class="price-current">${window.RoohUtil.formatCurrency(p.price)}</span>
+                ${hasDiscount ? `<span class="price-old">${window.RoohUtil.formatCurrency(p.original_price)}</span>` : ''}
+              </div>
+              <button class="icon-btn" onclick="window.roohApp.quickAddToCart('${p.id}')" title="شراء سريع">
+                <span>+</span>
               </button>
             </div>
           </div>
@@ -278,557 +635,625 @@ class RoohStorefrontApp {
     }).join('');
   }
 
-  // --- Product Detail Modal ---
-  openProductModal(productId) {
-    const prod = this.store.getProductById(productId);
-    if (!prod) return;
+  async quickAddToCart(productId) {
+    const product = await window.roohDB.getProductById(productId);
+    if (!product) return;
 
-    this.activeProductModalId = productId;
-    this.activeModalTab = 'desc';
-    this.activeModalQty = 1;
+    window.roohCart.addItem({
+      product_id: product.id,
+      name: product.name_ar,
+      sku: product.sku,
+      qty: 1,
+      unit_price: product.price,
+      unit_cost: product.cost_price,
+      image: product.image
+    });
 
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-    const title = isAr ? prod.nameAr : prod.nameEn;
-    const badge = isAr ? prod.badge : (prod.badgeEn || prod.badge);
-    const volume = isAr ? prod.volume : (prod.volumeEn || prod.volume);
-    const discount = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100);
+    window.RoohUtil.showToast(`تمت إضافة "${product.name_ar}" إلى حقيبة التسوق!`, 'success');
+    window.roohCart.openDrawer();
+  }
 
-    const dialog = document.getElementById('productDetailModalDialog');
-    if (!dialog) return;
+  async openProductModal(productId) {
+    const product = await window.roohDB.getProductById(productId);
+    if (!product) return;
 
-    dialog.innerHTML = `
-      <button class="modal-close-btn" id="productDetailModalCloseBtn" onclick="window.roohApp.closeProductModal()">✕</button>
-      <div class="product-detail-modal-grid">
-        <div class="modal-gallery-wrap">
-          <div class="modal-main-img-wrap">
-            <img class="modal-main-img" src="${prod.image}" alt="${title}">
+    const modal = document.getElementById('productDetailModal');
+    const content = document.getElementById('productModalContent');
+    if (!modal || !content) return;
+
+    const hasDiscount = product.original_price > product.price;
+
+    content.innerHTML = `
+      <div class="product-detail-grid" style="display:grid; grid-template-columns:1fr 1.2fr; gap:30px; align-items:start;">
+        <div>
+          <img src="${product.image}" alt="${product.name_ar}" style="width:100%; border-radius:14px; border:1px solid var(--rooh-border); box-shadow:var(--rooh-shadow-md);" />
+        </div>
+        <div>
+          <span class="badge-tag tag-new" style="margin-bottom:8px; display:inline-block; cursor:pointer;" onclick="document.getElementById('productDetailModal').classList.remove('open'); window.roohApp.filterCategory('${product.category_id}')" title="انقر لتصفح جميع منتجات قسم ${product.category_name_ar}">🏷️ ${product.category_name_ar} (عرض القسم)</span>
+          <h2 style="font-family:var(--rooh-font-serif); font-size:1.6rem; color:var(--rooh-dark); margin-bottom:8px;">${product.name_ar}</h2>
+          <div style="font-size:0.8rem; color:var(--rooh-muted); margin-bottom:12px;">كود المنتج (SKU): ${product.sku} | باركود: ${product.barcode}</div>
+          
+          <div class="product-rating" style="margin-bottom:16px;">
+            <span>★ ${product.rating}</span>
+            <span class="review-count">(${product.review_count} تقييم معتمد)</span>
+            <span style="color:var(--rooh-success); font-weight:700; margin-right:12px;">● متوفر بالمستودع (${product.stock} عبوة)</span>
           </div>
-          <div style="display: flex; gap: 0.75rem;">
-            <div style="width: 70px; height: 70px; background: var(--rooh-cream); border: 2px solid var(--rooh-gold); border-radius: 8px; padding: 0.4rem; display: flex; align-items: center; justify-content: center;">
-              <img src="${prod.image}" style="max-height: 100%; object-fit: contain;">
+
+          <div style="font-size:1.6rem; font-weight:800; color:var(--rooh-gold); margin-bottom:16px; display:flex; align-items:center; gap:12px;">
+            <span>${window.RoohUtil.formatCurrency(product.price)}</span>
+            ${hasDiscount ? `<span style="font-size:1.1rem; color:var(--rooh-muted); text-decoration:line-through;">${window.RoohUtil.formatCurrency(product.original_price)}</span>` : ''}
+          </div>
+
+          <p style="font-size:0.95rem; color:var(--rooh-muted); line-height:1.7; margin-bottom:20px;">
+            ${product.description_ar}
+          </p>
+
+          <div style="background:var(--rooh-sand-light); padding:14px; border-radius:10px; margin-bottom:16px; font-size:0.85rem;">
+            <strong style="color:var(--rooh-dark); display:block; margin-bottom:4px;">🌿 المكونات الطبيعية الفعالة:</strong>
+            <p style="color:var(--rooh-muted); margin:0;">${product.ingredients_ar || 'مستخلصات نباتية نقية 100% معتمدة معملياً'}</p>
+          </div>
+
+          <div style="background:var(--rooh-sand-light); padding:14px; border-radius:10px; margin-bottom:24px; font-size:0.85rem;">
+            <strong style="color:var(--rooh-dark); display:block; margin-bottom:4px;">✨ طريقة الاستخدام المثلى:</strong>
+            <p style="color:var(--rooh-muted); margin:0;">${product.usage_ar || 'يدلك بلطف على بشرة نظيفة وجافة صباحاً ومساءً'}</p>
+          </div>
+
+          <button class="btn-rooh btn-rooh-primary" style="width:100%; font-size:1.05rem;" onclick="window.roohApp.quickAddToCart('${product.id}'); document.getElementById('productDetailModal').classList.remove('open');">
+            <span>إضافة إلى حقيبة التسوق</span>
+            <span>🛍️</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('open');
+  }
+
+  async renderReviewsSection() {
+    const list = await window.roohDB.getReviews('Approved');
+    const container = document.getElementById('reviewsContainer');
+    if (!container) return;
+
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--rooh-muted);">
+          كن أول من يشاركنا تقييمه الملكي لمنتجات روح!
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(r => `
+      <div style="background:var(--rooh-white); border:1px solid var(--rooh-border); border-radius:16px; padding:24px; box-shadow:var(--rooh-shadow-sm); display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="color:var(--rooh-gold); font-size:1.1rem;">${'★'.repeat(r.rating)}</div>
+            ${r.verified_purchase ? '<span class="badge-tag" style="background:#E8F5E9; color:#2E7D32;">مشترٍ مؤكد ✓</span>' : ''}
+          </div>
+          <h4 style="font-weight:700; font-size:1.05rem; color:var(--rooh-dark); margin-bottom:8px;">${r.title}</h4>
+          <p style="font-size:0.9rem; color:var(--rooh-muted); line-height:1.6;">${r.comment}</p>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:12px; border-top:1px solid var(--rooh-sand); font-size:0.8rem; color:var(--rooh-muted);">
+          <strong>${r.customer_name}</strong>
+          <span>${r.date}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ================= CUSTOMER PORTAL =================
+  openCustomerModal(tab = 'login') {
+    const modal = document.getElementById('customerModal');
+    const body = document.getElementById('customerModalBody');
+    if (!modal || !body) return;
+
+    if (this.currentCustomer) {
+      this.renderCustomerProfileView(body);
+    } else {
+      this.renderCustomerAuthView(body, tab);
+    }
+
+    modal.classList.add('open');
+  }
+
+  renderCustomerAuthView(container, activeTab = 'login') {
+    container.innerHTML = `
+      <div style="text-align:center; margin-bottom:20px;">
+        <span style="font-size:2rem;">👑</span>
+        <h2 style="font-family:var(--rooh-font-serif); font-size:1.5rem; color:var(--rooh-dark); margin-bottom:4px;">
+          بوابة عملاء روح الملكية
+        </h2>
+        <p style="font-size:0.85rem; color:var(--rooh-muted);">
+          سجلي دخولكِ لمتابعة طلباتكِ وحفظ تركيباتكِ الخاصة
+        </p>
+      </div>
+
+      <!-- Auth Tabs -->
+      <div style="display:flex; border-bottom:1px solid var(--rooh-border); margin-bottom:20px;">
+        <button type="button" class="tab-btn ${activeTab === 'login' ? 'active' : ''}" style="flex:1; padding:12px; font-weight:700; border-bottom:2px solid ${activeTab === 'login' ? 'var(--rooh-gold)' : 'transparent'}; color:${activeTab === 'login' ? 'var(--rooh-dark)' : 'var(--rooh-muted)'};" onclick="window.roohApp.renderCustomerAuthView(document.getElementById('customerModalBody'), 'login')">
+          تسجيل الدخول
+        </button>
+        <button type="button" class="tab-btn ${activeTab === 'register' ? 'active' : ''}" style="flex:1; padding:12px; font-weight:700; border-bottom:2px solid ${activeTab === 'register' ? 'var(--rooh-gold)' : 'transparent'}; color:${activeTab === 'register' ? 'var(--rooh-dark)' : 'var(--rooh-muted)'};" onclick="window.roohApp.renderCustomerAuthView(document.getElementById('customerModalBody'), 'register')">
+          حساب جديد
+        </button>
+      </div>
+
+      ${activeTab === 'login' ? `
+        <form onsubmit="window.roohApp.handleCustomerLoginSubmit(event)" style="display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">رقم الهاتف أو البريد الإلكتروني *</label>
+            <input type="text" id="custLoginIdentifier" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="01xxxxxxxxx أو yourname@gmail.com" />
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">كلمة المرور *</label>
+            <input type="password" id="custLoginPassword" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-rooh btn-rooh-primary" style="padding:12px; font-size:1rem; margin-top:8px;">
+            <span>تسجيل الدخول</span>
+          </button>
+
+          <div style="text-align:center; margin:12px 0; position:relative;">
+            <hr style="border:0; border-top:1px solid var(--rooh-border);" />
+            <span style="position:absolute; top:-10px; background:#FFF; padding:0 12px; font-size:0.8rem; color:var(--rooh-muted); left:50%; transform:translateX(-50%);">أو</span>
+          </div>
+
+          <button type="button" class="btn-rooh btn-rooh-outline" style="width:100%; justify-content:center;" onclick="window.roohApp.handleGoogleLoginSim()">
+            <span>الدخول السريع بحساب Google</span>
+            <span>🌐</span>
+          </button>
+        </form>
+      ` : `
+        <form onsubmit="window.roohApp.handleCustomerRegisterSubmit(event)" style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">الاسم الكريم بالكامل *</label>
+            <input type="text" id="custRegName" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="اكتبي اسمكِ ثلاثياً" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">رقم الهاتف (واتساب) *</label>
+              <input type="tel" id="custRegPhone" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="01xxxxxxxxx" />
             </div>
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">البريد الإلكتروني</label>
+              <input type="email" id="custRegEmail" class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="example@gmail.com" />
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">المحافظة *</label>
+            <select id="custRegGov" class="select-filter" style="width:100%; border-radius:8px; padding:10px;">
+              ${this.governorates.map(g => `<option value="${g.name_ar}">${g.name_ar}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">العنوان التفصيلي</label>
+            <input type="text" id="custRegAddress" class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="الشارع، رقم العمارة، رقم الشقة" />
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">كلمة المرور *</label>
+            <input type="password" id="custRegPassword" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-rooh btn-rooh-primary" style="padding:12px; font-size:1rem; margin-top:8px;">
+            <span>إنشاء الحساب الملكي</span>
+          </button>
+        </form>
+      `}
+    `;
+  }
+
+  async handleCustomerLoginSubmit(e) {
+    e.preventDefault();
+    const identifier = document.getElementById('custLoginIdentifier').value;
+    const password = document.getElementById('custLoginPassword').value;
+
+    const res = await window.roohDB.customerLogin(identifier, password);
+    if (res.error) {
+      window.RoohUtil.showToast(res.error, 'error');
+      return;
+    }
+
+    this.saveCustomer(res.customer);
+    window.RoohUtil.showToast(`أهلاً بكِ مجدداً، ${res.customer.name}! ✨`, 'success');
+    this.openCustomerModal();
+  }
+
+  async handleCustomerRegisterSubmit(e) {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('custRegName').value,
+      phone: document.getElementById('custRegPhone').value,
+      email: document.getElementById('custRegEmail').value,
+      governorate: document.getElementById('custRegGov').value,
+      address: document.getElementById('custRegAddress').value,
+      password: document.getElementById('custRegPassword').value
+    };
+
+    const res = await window.roohDB.customerRegister(data);
+    if (res.error) {
+      window.RoohUtil.showToast(res.error, 'error');
+      return;
+    }
+
+    this.saveCustomer(res.customer);
+    window.RoohUtil.showToast(`تم إنشاء حسابكِ بنجاح! أهلاً بكِ في عائلة روح.`, 'success');
+    this.openCustomerModal();
+  }
+
+  async handleGoogleLoginSim() {
+    const demoGoogle = {
+      name: 'سارة أحمد',
+      email: 'sarah.ahmed@gmail.com',
+      phone: '01099887766',
+      google_id: `G-${Date.now()}`
+    };
+
+    const res = await window.roohDB.customerGoogleLogin(demoGoogle);
+    if (res.customer) {
+      this.saveCustomer(res.customer);
+      window.RoohUtil.showToast(`تم تسجيل الدخول بواسطة Google بنجاح: أهلاً، ${res.customer.name}!`, 'success');
+      this.openCustomerModal();
+    }
+  }
+
+  async renderCustomerProfileView(container) {
+    const cust = this.currentCustomer;
+    const orders = await window.roohDB.getCustomerOrders(cust.phone, cust.email);
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--rooh-border);">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:48px; height:48px; border-radius:50%; background:var(--rooh-gold); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">
+            👑
+          </div>
+          <div>
+            <h3 style="font-family:var(--rooh-font-serif); font-size:1.3rem; margin:0; color:var(--rooh-dark);">${cust.name}</h3>
+            <span class="badge-tag tag-new" style="font-size:0.75rem;">${cust.tier === 'VIP' ? 'عميل VIP ملكي 💎' : 'عميل مميز 🌿'}</span>
           </div>
         </div>
+        <button class="btn-rooh btn-rooh-outline btn-rooh-sm" onclick="window.roohApp.handleCustomerLogout()">
+          <span>تسجيل خروج</span>
+        </button>
+      </div>
 
-        <div class="modal-product-info">
-          ${badge ? `<span class="modal-product-badge">${badge}</span>` : ''}
-          <h2 class="modal-product-title">${title}</h2>
-          <div class="modal-product-sku">
-            SKU: <strong style="color: var(--rooh-burgundy);">${prod.sku}</strong> • ${volume}
+      <!-- Quick Info Cards -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+        <div style="background:var(--rooh-sand-light); padding:12px; border-radius:10px;">
+          <div style="font-size:0.75rem; color:var(--rooh-muted);">الهاتف والمحافظة</div>
+          <strong style="font-size:0.9rem; color:var(--rooh-dark);">${cust.phone || '-'} | ${cust.governorate || '-'}</strong>
+        </div>
+        <div style="background:var(--rooh-sand-light); padding:12px; border-radius:10px;">
+          <div style="font-size:0.75rem; color:var(--rooh-muted);">عدد الطلبات السابقة</div>
+          <strong style="font-size:0.9rem; color:var(--rooh-gold);">${orders.length} طلبات</strong>
+        </div>
+      </div>
+
+      <!-- Orders History List -->
+      <h4 style="font-size:1rem; color:var(--rooh-dark); margin-bottom:12px;">سجل طلباتكِ في روح</h4>
+      <div style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+        ${orders.length === 0 ? `
+          <div style="text-align:center; padding:30px 10px; color:var(--rooh-muted); font-size:0.85rem;">
+            لا توجد طلبات سابقة مسجلة حتى الآن.
           </div>
-
-          <div class="modal-price-wrap">
-            <span class="modal-price-current">${prod.price.toLocaleString()} ${currency}</span>
-            ${prod.originalPrice > prod.price ? `
-              <span class="modal-price-original">${prod.originalPrice.toLocaleString()} ${currency}</span>
-              <span class="price-discount-pill" style="font-size: 0.85rem; padding: 0.2rem 0.6rem;">-${discount}%</span>
-            ` : ''}
-          </div>
-
-          <!-- Stock Indicator -->
-          <div class="modal-stock-indicator">
-            <span class="stock-pulse-dot" style="background: ${prod.stock < 10 ? '#EF6C00' : '#2E7D32'};"></span>
-            <span style="color: ${prod.stock < 10 ? '#E65100' : '#2E7D32'};">
-              ${isAr 
-                ? (prod.stock < 10 ? `سارعي بالطلب: متبقي ${prod.stock} قطع فقط في المستودع!` : `متوفر في المستودع (${prod.stock} قطعة)`)
-                : (prod.stock < 10 ? `Hurry: Only ${prod.stock} items left in stock!` : `In Stock (${prod.stock} items)`)}
-            </span>
-          </div>
-
-          <!-- Tabs -->
-          <div class="modal-tabs-header">
-            <button class="modal-tab-btn ${this.activeModalTab === 'desc' ? 'active' : ''}" 
-                    onclick="window.roohApp.switchModalTab('desc')">
-              ${isAr ? 'الوصف الفاخر' : 'Description'}
-            </button>
-            <button class="modal-tab-btn ${this.activeModalTab === 'ingredients' ? 'active' : ''}" 
-                    onclick="window.roohApp.switchModalTab('ingredients')">
-              ${isAr ? 'المكونات النشطة' : 'Ingredients'}
-            </button>
-            <button class="modal-tab-btn ${this.activeModalTab === 'howToUse' ? 'active' : ''}" 
-                    onclick="window.roohApp.switchModalTab('howToUse')">
-              ${isAr ? 'طريقة الاستخدام' : 'How to Use'}
-            </button>
-            <button class="modal-tab-btn ${this.activeModalTab === 'suitability' ? 'active' : ''}" 
-                    onclick="window.roohApp.switchModalTab('suitability')">
-              ${isAr ? 'الملاءمة' : 'Suitability'}
-            </button>
-          </div>
-
-          <div class="modal-tab-content" id="modalDynamicTabContent">
-            ${this.getModalTabContent(prod, this.activeModalTab, isAr)}
-          </div>
-
-          <!-- Quantity Stepper & Actions -->
-          <div class="modal-action-row">
-            <div class="quantity-stepper">
-              <button class="qty-btn" onclick="window.roohApp.stepModalQty(-1)">−</button>
-              <input type="text" class="qty-input" id="modalQtyDisplay" value="1" readonly>
-              <button class="qty-btn" onclick="window.roohApp.stepModalQty(1)">+</button>
+        ` : orders.map(o => `
+          <div style="background:#FFF; border:1px solid var(--rooh-border); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.9rem; color:var(--rooh-dark);">
+                طلب #${o.order_number}
+                <span class="badge-tag" style="margin-right:6px; font-size:0.75rem;">${o.status}</span>
+              </div>
+              <div style="font-size:0.75rem; color:var(--rooh-muted); margin-top:2px;">
+                ${o.created_at ? o.created_at.split('T')[0] : ''} | الإجمالي: <strong>${window.RoohUtil.formatCurrency(o.total_amount)}</strong>
+              </div>
             </div>
-
-            <button class="btn-burgundy" style="flex: 1;" onclick="window.roohApp.addModalToCart()">
-              <span>🛍</span> ${isAr ? 'أضيفي للسلة' : 'Add to Cart'}
+            <button class="btn-rooh btn-rooh-outline btn-rooh-sm" onclick="window.RoohDocumentManager.printInvoice(${JSON.stringify(o).replace(/"/g, '&quot;')})">
+              <span>الفاتورة</span>
+              <span>🖨️</span>
             </button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
 
-            <button class="btn-gold" onclick="window.roohApp.buyModalNow()">
-              ${isAr ? 'شراء فوري' : 'Buy Now'}
-            </button>
+  handleCustomerLogout() {
+    this.saveCustomer(null);
+    window.RoohUtil.showToast('تم تسجيل الخروج بنجاح.', 'info');
+    document.getElementById('customerModal')?.classList.remove('open');
+  }
+
+  // ================= CHECKOUT & ORDER SUBMISSION =================
+  openCheckoutModal() {
+    window.roohCart.closeDrawer();
+    const modal = document.getElementById('checkoutModal');
+    if (!modal) return;
+
+    const sub = window.roohCart.getSubtotal();
+    const isFree = sub >= 750;
+    const ship = isFree ? 0 : window.roohCart.shippingFee;
+    const tot = window.roohCart.getTotal();
+    const cust = this.currentCustomer;
+
+    // Use All 27 Governorates in exact required order
+    const defaultGov = cust?.governorate || 'القاهرة';
+    const zonesSelect = this.governorates.map(g => `
+      <option value="${g.name_ar}" data-price="${g.delivery_fee}" ${g.name_ar === defaultGov ? 'selected' : ''}>
+        ${g.name_ar} (${g.delivery_fee} ج.م - ${g.delivery_time})
+      </option>
+    `).join('');
+
+    // Pre-calculate initial shipping fee based on selected governorate
+    const currentGovObj = this.governorates.find(g => g.name_ar === defaultGov);
+    if (currentGovObj) {
+      window.roohCart.shippingFee = currentGovObj.delivery_fee;
+    }
+
+    modal.querySelector('.modal-content').innerHTML = `
+      <button class="modal-close-btn" onclick="document.getElementById('checkoutModal').classList.remove('open')">&times;</button>
+      <h2 style="font-family:var(--rooh-font-serif); font-size:1.6rem; color:var(--rooh-dark); margin-bottom:6px; text-align:center;">
+        إتمام الطلب والشحن الفاخر
+      </h2>
+      <p style="text-align:center; font-size:0.85rem; color:var(--rooh-muted); margin-bottom:24px;">
+        شحن لجميع محافظات جمهورية مصر العربية الـ 27 | شحن مجاني للطلبات فوق 750 ج.م
+      </p>
+
+      <div class="checkout-grid" style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:30px;">
+        <!-- Left: Form -->
+        <form id="checkoutSubmitForm" onsubmit="window.roohApp.handleOrderSubmit(event)">
+          <h4 style="font-size:1rem; color:var(--rooh-gold); margin-bottom:12px;">1. بيانات التوصيل والاستلام</h4>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">الاسم بالكامل *</label>
+              <input type="text" id="chkName" required class="ai-chat-input" style="width:100%; border-radius:8px;" value="${cust?.name || ''}" placeholder="اكتبي اسمكِ ثلاثياً" />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">رقم الهاتف (واتساب) *</label>
+                <input type="tel" id="chkPhone" required class="ai-chat-input" style="width:100%; border-radius:8px;" value="${cust?.phone || ''}" placeholder="01xxxxxxxxx" />
+              </div>
+              <div>
+                <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">البريد الإلكتروني</label>
+                <input type="email" id="chkEmail" class="ai-chat-input" style="width:100%; border-radius:8px;" value="${cust?.email || ''}" placeholder="example@gmail.com" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">المحافظة (الـ 27 محافظة المصرية) *</label>
+              <select id="chkGov" class="select-filter" style="width:100%; border-radius:8px; padding:10px;" onchange="window.roohApp.onGovChange(this)">
+                ${zonesSelect}
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">العنوان التفصيلي واسم الشارع *</label>
+              <textarea id="chkAddress" required class="ai-chat-input" style="width:100%; height:65px; border-radius:8px;" placeholder="المدينة، الحي، رقم العمارة، رقم الشقة">${cust?.address || ''}</textarea>
+            </div>
+          </div>
+
+          <!-- Coupon Code Section -->
+          <div style="background:#FFF; border:1px solid var(--rooh-border); border-radius:10px; padding:14px; margin-bottom:24px;">
+            <label style="font-size:0.85rem; font-weight:700; color:var(--rooh-dark); display:block; margin-bottom:6px;">هل لديكِ كود خصم؟ 🎟️</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="chkCouponInput" class="ai-chat-input" placeholder="أدخلي كود الخصم (مثال: ROOH10)" style="flex:1; text-transform:uppercase; border-radius:8px;" />
+              <button type="button" class="btn-rooh btn-rooh-outline btn-rooh-sm" onclick="window.roohApp.applyCheckoutCoupon()">
+                تطبيق الكود
+              </button>
+            </div>
+            <div id="couponStatusMsg" style="margin-top:6px; font-size:0.8rem;"></div>
+          </div>
+
+          <h4 style="font-size:1rem; color:var(--rooh-gold); margin-bottom:12px;">2. طريقة السداد المعتمدة في مصر</h4>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1px solid var(--rooh-border); border-radius:8px; cursor:pointer;">
+              <input type="radio" name="chkPayMethod" value="InstaPay" checked onchange="window.roohApp.onPayMethodChange('InstaPay')" />
+              <div>
+                <strong>InstaPay (الدفع اللحظي إنستاباي)</strong>
+                <div style="font-size:0.75rem; color:var(--rooh-muted);">عنوان إنستاباي: <strong>rooh@instapay</strong> | رقم: <strong>01227208589</strong> (عبدالرحمن)</div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1px solid var(--rooh-border); border-radius:8px; cursor:pointer;">
+              <input type="radio" name="chkPayMethod" value="Vodafone Cash" onchange="window.roohApp.onPayMethodChange('Vodafone Cash')" />
+              <div>
+                <strong>فودافون كاش ومحافظ الهاتف (01227208589)</strong>
+                <div style="font-size:0.75rem; color:var(--rooh-muted);">تحويل المحفظة إلى رقم الإدارة الرسمي: <strong>01227208589</strong></div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1px solid var(--rooh-border); border-radius:8px; cursor:pointer;">
+              <input type="radio" name="chkPayMethod" value="Cash on Delivery" onchange="window.roohApp.onPayMethodChange('Cash on Delivery')" />
+              <div>
+                <strong>الدفع عند الاستلام (COD)</strong>
+                <div style="font-size:0.75rem; color:var(--rooh-muted);">السداد نقداً للمندوب فور فحص ومعاينة الطرد عند باب منزلك</div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1px solid var(--rooh-border); border-radius:8px; cursor:pointer;">
+              <input type="radio" name="chkPayMethod" value="Credit Card" onchange="window.roohApp.onPayMethodChange('Credit Card')" />
+              <div>
+                <strong>بطاقة بنكية (فيزا / ماستركارد - بوابة Paymob)</strong>
+                <div style="font-size:0.75rem; color:var(--rooh-muted);">دفع إلكتروني آمن ومشفر 100%</div>
+              </div>
+            </label>
+          </div>
+
+          <div id="paymentProofBox" style="background:#FBF9F5; padding:14px; border:1px dashed var(--rooh-gold); border-radius:8px; margin-bottom:20px;">
+            <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">الرقم المرجعي للتحويل أو رقم المحفظة المحول منها *</label>
+            <input type="text" id="chkRefCode" required class="ai-chat-input" style="width:100%; border-radius:8px;" placeholder="اكتبي الرقم المرجعي أو رقم هاتفك المحول منه" />
+          </div>
+
+          <button type="submit" class="btn-rooh btn-rooh-primary" style="width:100%; font-size:1.1rem; padding:14px;">
+            <span>تأكيد الطلب الآن</span>
+            <span>👑</span>
+          </button>
+        </form>
+
+        <!-- Right: Summary -->
+        <div style="background:var(--rooh-sand-light); padding:20px; border-radius:12px; height:fit-content; border:1px solid var(--rooh-border);">
+          <h4 style="font-size:1.1rem; color:var(--rooh-dark); margin-bottom:14px;">ملخص حقيبة التسوق</h4>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+            ${window.roohCart.items.map(i => `
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+                <span>${i.name} × ${i.qty}</span>
+                <strong>${window.RoohUtil.formatCurrency(i.total_price)}</strong>
+              </div>
+            `).join('')}
+          </div>
+          <div style="border-top:1px solid var(--rooh-border); padding-top:12px; display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+            <div style="display:flex; justify-content:space-between;">
+              <span>المجموع الفرعي:</span>
+              <span>${window.RoohUtil.formatCurrency(sub)}</span>
+            </div>
+            <div id="chkDiscountRow" style="display:${window.roohCart.couponDiscount > 0 ? 'flex' : 'none'}; justify-content:space-between; color:var(--rooh-success);">
+              <span>خصم الكوبون (${window.roohCart.couponCode}):</span>
+              <span id="chkDiscountVal">-${window.RoohUtil.formatCurrency(window.roohCart.couponDiscount)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>مصاريف الشحن:</span>
+              <span id="chkShippingFeeText">${isFree ? '<strong style="color:var(--rooh-success);">شحن مجاني</strong>' : window.RoohUtil.formatCurrency(ship)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:1.25rem; font-weight:800; color:var(--rooh-gold); border-top:1px solid var(--rooh-border); padding-top:10px; margin-top:4px;">
+              <span>المبلغ المستحق:</span>
+              <span id="chkTotalText">${window.RoohUtil.formatCurrency(tot)}</span>
+            </div>
           </div>
         </div>
       </div>
     `;
 
-    const backdrop = document.getElementById('productDetailModalBackdrop');
-    if (backdrop) backdrop.classList.add('active');
+    modal.classList.add('open');
   }
 
-  switchModalTab(tabKey) {
-    this.activeModalTab = tabKey;
-    const prod = this.store.getProductById(this.activeProductModalId);
-    if (!prod) return;
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const contentEl = document.getElementById('modalDynamicTabContent');
-    if (contentEl) {
-      contentEl.innerHTML = this.getModalTabContent(prod, tabKey, isAr);
-    }
-    document.querySelectorAll('.modal-tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabKey));
-    });
+  onGovChange(selectEl) {
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const price = Number(selectedOption.getAttribute('data-price')) || 45;
+    window.roohCart.shippingFee = price;
+    const sub = window.roohCart.getSubtotal();
+    const isFree = sub >= 750;
+    const feeEl = document.getElementById('chkShippingFeeText');
+    const totEl = document.getElementById('chkTotalText');
+    if (feeEl) feeEl.innerHTML = isFree ? '<strong style="color:var(--rooh-success);">شحن مجاني</strong>' : window.RoohUtil.formatCurrency(price);
+    if (totEl) totEl.textContent = window.RoohUtil.formatCurrency(window.roohCart.getTotal());
   }
 
-  getModalTabContent(prod, tabKey, isAr) {
-    switch (tabKey) {
-      case 'ingredients':
-        return `<p>✨ <strong>${isAr ? 'تركيبة غنية وموثقة:' : 'Certified Actives:'}</strong> ${isAr ? prod.ingredientsAr : prod.ingredientsEn}</p>`;
-      case 'howToUse':
-        return `<p>🕊️ <strong>${isAr ? 'خطوات الروتين اليومي:' : 'Daily Routine Steps:'}</strong> ${isAr ? prod.howToUseAr : prod.howToUseEn}</p>`;
-      case 'suitability':
-        return `<p>🌿 <strong>${isAr ? 'ملاءمة البشرة والشعر:' : 'Skin & Hair Suitability:'}</strong> ${isAr ? prod.suitabilityAr : prod.suitabilityEn}</p>`;
-      default:
-        return `<p>${isAr ? prod.descriptionAr : prod.descriptionEn}</p>`;
-    }
-  }
+  onPayMethodChange(method) {
+    const proofBox = document.getElementById('paymentProofBox');
+    const refInput = document.getElementById('chkRefCode');
+    if (!proofBox || !refInput) return;
 
-  stepModalQty(delta) {
-    const prod = this.store.getProductById(this.activeProductModalId);
-    if (!prod) return;
-    this.activeModalQty = Math.max(1, Math.min(prod.stock, this.activeModalQty + delta));
-    const input = document.getElementById('modalQtyDisplay');
-    if (input) input.value = this.activeModalQty;
-  }
-
-  addModalToCart() {
-    if (this.activeProductModalId) {
-      this.store.addToCart(this.activeProductModalId, this.activeModalQty);
-      this.closeProductModal();
-      this.openCartDrawer();
-      this.showToast(this.store.data.settings.currentLang === 'ar' ? 'تمت إضافة المنتج إلى حقيبة التسوق بنجاح' : 'Product added to bag');
-    }
-  }
-
-  buyModalNow() {
-    if (this.activeProductModalId) {
-      this.store.addToCart(this.activeProductModalId, this.activeModalQty);
-      this.closeProductModal();
-      this.openCheckoutModal();
-    }
-  }
-
-  closeProductModal() {
-    const backdrop = document.getElementById('productDetailModalBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
-    this.activeProductModalId = null;
-  }
-
-  // --- Cart Operations ---
-  addToCart(productId) {
-    this.store.addToCart(productId, 1);
-    this.openCartDrawer();
-    this.showToast(this.store.data.settings.currentLang === 'ar' ? 'تمت إضافة المنتج إلى حقيبة التسوق بنجاح' : 'Product added to bag');
-  }
-
-  buyNow(productId) {
-    this.store.addToCart(productId, 1);
-    this.openCheckoutModal();
-  }
-
-  openCartDrawer() {
-    this.renderCartItems();
-    const backdrop = document.getElementById('cartDrawerBackdrop');
-    if (backdrop) backdrop.classList.add('active');
-  }
-
-  closeCartDrawer() {
-    const backdrop = document.getElementById('cartDrawerBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
-  }
-
-  renderCartItems() {
-    const container = document.getElementById('cartDrawerItemsList');
-    if (!container) return;
-
-    const items = this.store.getCartItems();
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-
-    if (items.length === 0) {
-      container.innerHTML = `
-        <div class="cart-empty-message">
-          <div class="cart-empty-icon">🛍️</div>
-          <h4 style="color: var(--rooh-burgundy-deep); margin-bottom: 0.5rem; font-size: 1.15rem;">
-            ${isAr ? 'حقيبة التسوق فارغة حالياً' : 'Your Shopping Bag is Empty'}
-          </h4>
-          <p style="font-size: 0.88rem;">
-            ${isAr ? 'تصفحي مجموعات رُوح الفاخرة واختاري ما يلامس جمالكِ.' : 'Explore ROOH luxury collections to begin.'}
-          </p>
-        </div>
-      `;
-      this.updateCartSummaryFooter(0, 0, 0, 0);
-      return;
-    }
-
-    container.innerHTML = items.map(item => {
-      const prod = item.product;
-      const title = isAr ? prod.nameAr : prod.nameEn;
-      return `
-        <div class="cart-item-card">
-          <img class="cart-item-img" src="${prod.image}" alt="${title}">
-          <div class="cart-item-info">
-            <h4 class="cart-item-title">${title}</h4>
-            <div class="cart-item-price">${(prod.price * item.quantity).toLocaleString()} ${currency}</div>
-            
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem;">
-              <div class="quantity-stepper" style="height: 32px;">
-                <button class="qty-btn" style="width: 28px;" onclick="window.roohStore.updateCartQuantity(${prod.id}, ${item.quantity - 1}); window.roohApp.renderCartItems();">−</button>
-                <input type="text" class="qty-input" style="width: 32px; font-size: 0.85rem;" value="${item.quantity}" readonly>
-                <button class="qty-btn" style="width: 28px;" onclick="window.roohStore.updateCartQuantity(${prod.id}, ${item.quantity + 1}); window.roohApp.renderCartItems();">+</button>
-              </div>
-
-              <button class="cart-item-remove-btn" onclick="window.roohStore.removeFromCart(${prod.id}); window.roohApp.renderCartItems();">
-                🗑
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    const totals = this.store.getCartTotals(this.selectedGovernorate);
-    this.updateCartSummaryFooter(totals.subtotal, totals.vat, totals.shippingFee, totals.total);
-  }
-
-  updateCartSummaryFooter(subtotal, vat, shipping, total) {
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-    const threshold = this.store.data.settings.freeShippingThreshold;
-
-    const subEl = document.getElementById('cartSubtotalDisplay');
-    const vatEl = document.getElementById('cartVatDisplay');
-    const shipEl = document.getElementById('cartShippingDisplay');
-    const totEl = document.getElementById('cartTotalDisplay');
-
-    if (subEl) subEl.textContent = `${subtotal.toLocaleString()} ${currency}`;
-    if (vatEl) vatEl.textContent = `${Math.round(vat).toLocaleString()} ${currency}`;
-    if (shipEl) shipEl.textContent = shipping === 0 ? (isAr ? 'مجاني (عرض رُوح)' : 'Free') : `${shipping} ${currency}`;
-    if (totEl) totEl.textContent = `${Math.round(total).toLocaleString()} ${currency}`;
-
-    // Free Shipping Progress
-    const progText = document.getElementById('freeShippingProgressText');
-    const progBar = document.getElementById('freeShippingProgressBar');
-    if (progBar && progText) {
-      const pct = Math.min(100, Math.round((subtotal / threshold) * 100));
-      progBar.style.width = `${pct}%`;
-      if (subtotal >= threshold) {
-        progText.innerHTML = `🎉 ${isAr ? 'تهانينا! حصلتِ على <strong>شحن مجاني فاخر</strong> عبر أسطول شحن رُوح.' : 'Congrats! You unlocked <strong>Free Luxury Shipping</strong> via ROOH Delivery.'}`;
-      } else {
-        const remaining = threshold - subtotal;
-        progText.innerHTML = `🚚 ${isAr ? `أضيفي منتجات بقيمة <strong>${remaining.toLocaleString()} ${currency}</strong> للحصول على شحن مجاني.` : `Add <strong>${remaining.toLocaleString()} ${currency}</strong> more for Free Shipping.`}`;
-      }
-    }
-  }
-
-  updateCartBadge() {
-    const badge = document.getElementById('headerCartCountBadge');
-    if (badge) {
-      const items = this.store.getCartItems();
-      const count = items.reduce((sum, i) => sum + i.quantity, 0);
-      badge.textContent = count;
-      badge.style.display = count > 0 ? 'flex' : 'none';
-    }
-  }
-
-  updateWishlistBadge() {
-    const badge = document.getElementById('headerWishlistCountBadge');
-    if (badge) {
-      const count = this.store.data.wishlist.length;
-      badge.textContent = count;
-      badge.style.display = count > 0 ? 'flex' : 'none';
-    }
-  }
-
-  toggleWishlist(productId, btnEl) {
-    const isIn = this.store.toggleWishlist(productId);
-    if (btnEl) {
-      btnEl.classList.toggle('active', isIn);
-      btnEl.textContent = isIn ? '♥' : '♡';
-    }
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    this.showToast(isIn 
-      ? (isAr ? 'تمت إضافة المنتج لقائمة الرغبات الملكية' : 'Added to wishlist')
-      : (isAr ? 'تمت الإزالة من قائمة الرغبات' : 'Removed from wishlist'));
-  }
-
-  // --- Wishlist Modal ---
-  openWishlistModal() {
-    const container = document.getElementById('wishlistItemsContainer');
-    if (!container) return;
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-    const ids = this.store.data.wishlist;
-
-    if (ids.length === 0) {
-      container.innerHTML = `
-        <div style="text-align: center; padding: 3rem 1rem; color: var(--rooh-text-muted);">
-          <div style="font-size: 3rem; margin-bottom: 0.8rem;">♡</div>
-          <h4>${isAr ? 'قائمة الرغبات فارغة' : 'Wishlist is empty'}</h4>
-        </div>
-      `;
+    if (method === 'Cash on Delivery') {
+      proofBox.style.display = 'none';
+      refInput.removeAttribute('required');
+      refInput.value = 'COD-UPON-DELIVERY';
     } else {
-      container.innerHTML = ids.map(id => {
-        const prod = this.store.getProductById(id);
-        if (!prod) return '';
-        const title = isAr ? prod.nameAr : prod.nameEn;
-        return `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid var(--rooh-sand);">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <img src="${prod.image}" style="width: 56px; height: 56px; object-fit: contain;">
-              <div>
-                <strong style="color: var(--rooh-burgundy-deep); font-size: 0.95rem;">${title}</strong>
-                <div style="color: var(--rooh-burgundy); font-weight: 700;">${prod.price.toLocaleString()} ${currency}</div>
-              </div>
-            </div>
-            <button class="btn-burgundy" style="padding: 0.45rem 1rem; font-size: 0.85rem;" onclick="window.roohApp.addToCart(${prod.id}); window.roohApp.closeWishlistModal();">
-              ${isAr ? 'أضيفي للسلة' : 'Add to Cart'}
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    const backdrop = document.getElementById('wishlistModalBackdrop');
-    if (backdrop) backdrop.classList.add('active');
-  }
-
-  closeWishlistModal() {
-    const backdrop = document.getElementById('wishlistModalBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
-  }
-
-  // --- Checkout Operations ---
-  openCheckoutModal() {
-    this.closeCartDrawer();
-    const items = this.store.getCartItems();
-    if (items.length === 0) {
-      alert(this.store.data.settings.currentLang === 'ar' ? 'حقيبة التسوق فارغة!' : 'Your bag is empty!');
-      return;
-    }
-
-    this.renderCheckoutForm();
-    const backdrop = document.getElementById('checkoutModalBackdrop');
-    if (backdrop) backdrop.classList.add('active');
-  }
-
-  closeCheckoutModal() {
-    const backdrop = document.getElementById('checkoutModalBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
-  }
-
-  renderCheckoutForm() {
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-    const user = this.store.data.currentUser;
-    const govs = this.store.data.shipping.governorates;
-
-    const govSelect = document.getElementById('checkoutGovernorateSelect');
-    if (govSelect) {
-      govSelect.innerHTML = govs.map(g => `
-        <option value="${g.id}" ${g.id === this.selectedGovernorate ? 'selected' : ''}>
-          ${isAr ? g.nameAr : g.nameEn} (${g.fee} ${currency} • ${g.transitTime})
-        </option>
-      `).join('');
-
-      govSelect.onchange = (e) => {
-        this.selectedGovernorate = e.target.value;
-        this.updateCheckoutTotals();
-      };
-    }
-
-    // Customer fields default values
-    const nameInput = document.getElementById('checkoutCustomerName');
-    const phoneInput = document.getElementById('checkoutCustomerPhone');
-    const addressInput = document.getElementById('checkoutCustomerAddress');
-
-    if (nameInput) nameInput.value = isAr ? user.name : user.nameEn;
-    if (phoneInput) phoneInput.value = user.phone;
-    if (addressInput && user.addresses.length > 0) {
-      addressInput.value = user.addresses[0].details;
-    }
-
-    // Bind payment method cards
-    document.querySelectorAll('.payment-method-card').forEach(card => {
-      card.onclick = (e) => {
-        document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.selectedPaymentMethod = card.getAttribute('data-method');
-        this.updateCheckoutTotals();
-      };
-    });
-
-    this.updateCheckoutTotals();
-  }
-
-  updateCheckoutTotals() {
-    const isCod = this.selectedPaymentMethod === 'cod';
-    const totals = this.store.getCartTotals(this.selectedGovernorate, isCod);
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const currency = isAr ? this.store.data.settings.currencyAr : this.store.data.settings.currencyEn;
-
-    const subEl = document.getElementById('checkoutSubtotal');
-    const vatEl = document.getElementById('checkoutVat');
-    const shipEl = document.getElementById('checkoutShipping');
-    const codEl = document.getElementById('checkoutCodFeeRow');
-    const totEl = document.getElementById('checkoutTotal');
-
-    if (subEl) subEl.textContent = `${totals.subtotal.toLocaleString()} ${currency}`;
-    if (vatEl) vatEl.textContent = `${Math.round(totals.vat).toLocaleString()} ${currency}`;
-    if (shipEl) shipEl.textContent = totals.shippingFee === 0 ? (isAr ? 'شحن مجاني' : 'Free Shipping') : `${totals.shippingFee} ${currency}`;
-    if (totEl) totEl.textContent = `${Math.round(totals.total).toLocaleString()} ${currency}`;
-
-    if (codEl) {
-      codEl.style.display = isCod ? 'flex' : 'none';
-      const codVal = document.getElementById('checkoutCodFeeVal');
-      if (codVal) codVal.textContent = `${this.store.data.settings.codFee} ${currency}`;
-    }
-
-    // Render active payment details UI
-    const payContainer = document.getElementById('checkoutPaymentDetailsContainer');
-    if (payContainer && window.roohPayment) {
-      window.roohPayment.renderPaymentMethodUI(
-        this.selectedPaymentMethod,
-        totals.total,
-        payContainer,
-        this.store.data.settings.currentLang
-      );
+      proofBox.style.display = 'block';
+      refInput.setAttribute('required', 'required');
+      refInput.value = '';
     }
   }
 
-  submitOrder() {
-    const isAr = this.store.data.settings.currentLang === 'ar';
-    const nameInput = document.getElementById('checkoutCustomerName');
-    const phoneInput = document.getElementById('checkoutCustomerPhone');
-    const addressInput = document.getElementById('checkoutCustomerAddress');
+  async applyCheckoutCoupon() {
+    const input = document.getElementById('chkCouponInput');
+    const statusMsg = document.getElementById('couponStatusMsg');
+    const code = input?.value.trim().toUpperCase();
+    if (!code) return;
 
-    const customerName = nameInput ? nameInput.value.trim() : 'عميل رُوح';
-    const customerPhone = phoneInput ? phoneInput.value.trim() : '010XXXXXXXX';
-    const shippingAddress = addressInput ? addressInput.value.trim() : 'العنوان';
+    const sub = window.roohCart.getSubtotal();
+    const res = await window.roohDB.validateCoupon(code, sub);
 
-    if (!customerPhone || customerPhone.length < 9) {
-      alert(isAr ? 'يرجى إدخال رقم هاتف مصري صحيح للتواصل مع مندوب شحن رُوح.' : 'Please enter a valid phone number for the courier.');
-      return;
+    if (res.valid) {
+      window.roohCart.couponDiscount = res.discount;
+      window.roohCart.couponCode = code;
+
+      if (statusMsg) {
+        statusMsg.innerHTML = `<span style="color:var(--rooh-success); font-weight:700;">✓ ${res.message}</span>`;
+      }
+
+      const discRow = document.getElementById('chkDiscountRow');
+      const discVal = document.getElementById('chkDiscountVal');
+      const totText = document.getElementById('chkTotalText');
+
+      if (discRow && discVal) {
+        discRow.style.display = 'flex';
+        discVal.textContent = `-${window.RoohUtil.formatCurrency(res.discount)}`;
+      }
+      if (totText) {
+        totText.textContent = window.RoohUtil.formatCurrency(window.roohCart.getTotal());
+      }
+      window.RoohUtil.showToast(`تم تطبيق خصم بقيمة ${res.discount} ج.م بنجاح!`, 'success');
+    } else {
+      if (statusMsg) {
+        statusMsg.innerHTML = `<span style="color:var(--rooh-danger); font-weight:700;">✗ ${res.message}</span>`;
+      }
+      window.RoohUtil.showToast(res.message, 'error');
     }
+  }
 
-    const isCod = this.selectedPaymentMethod === 'cod';
-    const totals = this.store.getCartTotals(this.selectedGovernorate, isCod);
-    const govObj = this.store.data.shipping.governorates.find(g => g.id === this.selectedGovernorate) || this.store.data.shipping.governorates[0];
+  async handleOrderSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('chkName').value;
+    const phone = document.getElementById('chkPhone').value;
+    const email = document.getElementById('chkEmail').value;
+    const govSelect = document.getElementById('chkGov');
+    const gov = govSelect.options[govSelect.selectedIndex].text.split('(')[0].trim();
+    const address = document.getElementById('chkAddress').value;
+    const payMethod = document.querySelector('input[name="chkPayMethod"]:checked')?.value || 'InstaPay';
+    const refCode = document.getElementById('chkRefCode')?.value || '';
+
+    const sub = window.roohCart.getSubtotal();
+    const ship = sub >= 750 ? 0 : window.roohCart.shippingFee;
+    const disc = window.roohCart.couponDiscount;
+    const tot = window.roohCart.getTotal();
 
     const orderPayload = {
-      customerName,
-      customerPhone,
-      governorate: govObj.nameAr,
-      shippingAddress,
-      paymentMethod: this.selectedPaymentMethod,
-      paymentStatus: this.selectedPaymentMethod === 'cod' ? 'pending_collection' : 'paid',
-      paymentRef: this.selectedPaymentMethod === 'fawry' 
-        ? `FAWRY-${document.getElementById('fawryGeneratedCode')?.textContent.trim() || '982-120'}`
-        : (this.selectedPaymentMethod === 'instapay' ? window.roohPayment.generateInstapayRef() : window.roohPayment.generateWalletRef()),
-      subtotal: totals.subtotal,
-      vat: totals.vat,
-      shippingFee: totals.shippingFee,
-      codFee: totals.codFee,
-      total: totals.total,
-      items: this.store.getCartItems().map(i => ({
-        productId: i.product.id,
-        nameAr: i.product.nameAr,
-        price: i.product.price,
-        quantity: i.quantity,
-        image: i.product.image
-      }))
+      customer: { name, phone, email, governorate: gov, address },
+      items: window.roohCart.items,
+      subtotal: sub,
+      discount: disc,
+      coupon_code: window.roohCart.couponCode || null,
+      shipping_fee: ship,
+      total_amount: tot,
+      cogs_total: window.roohCart.items.reduce((s, i) => s + (i.unit_cost * i.qty), 0),
+      payment_method: payMethod,
+      payment_reference: refCode,
+      notes: `طلب تم إرساله من متجر سوق روح`
     };
 
-    const createdOrder = this.store.createOrder(orderPayload);
-    this.closeCheckoutModal();
+    const newOrder = await window.roohDB.createOrder(orderPayload);
 
-    // Show luxury confirmation screen
-    this.openTrackingModal(createdOrder.id, true);
-    this.showToast(isAr ? 'تم تأكيد طلبكِ بنجاح وتسليمه لأسطول شحن رُوح!' : 'Order placed successfully & sent to ROOH Delivery!');
-  }
+    // Empty cart and reset discount
+    window.roohCart.items = [];
+    window.roohCart.couponDiscount = 0;
+    window.roohCart.couponCode = '';
+    window.roohCart.save();
 
-  // --- Tracking Modal ---
-  openTrackingModal(orderId, isJustCreated = false) {
-    const order = window.roohDelivery.trackOrder(orderId);
-    const container = document.getElementById('trackingModalContentContainer');
-    const isAr = this.store.data.settings.currentLang === 'ar';
-
-    if (!container) return;
-
-    if (!order) {
-      container.innerHTML = `
-        <div style="text-align: center; padding: 3rem 1rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-          <h3 style="color: var(--rooh-burgundy-deep); margin-bottom: 0.5rem;">
-            ${isAr ? 'لم يتم العثور على الشحنة' : 'Order Not Found'}
-          </h3>
-          <p style="color: var(--rooh-text-muted);">
-            ${isAr ? `تأكدي من صحة رقم التتبع المدخل: <strong>${orderId}</strong>` : `Please check the tracking number: <strong>${orderId}</strong>`}
-          </p>
+    // Show luxury confirmation modal
+    const modal = document.getElementById('checkoutModal');
+    modal.querySelector('.modal-content').innerHTML = `
+      <div style="text-align:center; padding:30px 10px;">
+        <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, var(--rooh-gold) 0%, #9C7F3B 100%); color:#FFF; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 16px;">
+          ✓
         </div>
-      `;
-    } else {
-      window.roohDelivery.renderTrackingTimelineUI(order, container, this.store.data.settings.currentLang);
-    }
+        <h2 style="font-family:var(--rooh-font-serif); font-size:1.8rem; color:var(--rooh-dark); margin-bottom:8px;">
+          تم تسجيل طلبكِ بنجاح!
+        </h2>
+        <div style="font-size:1.1rem; color:var(--rooh-gold); font-weight:700; margin-bottom:16px;">
+          رقم الطلب: #${newOrder.order_number}
+        </div>
+        <p style="font-size:0.95rem; color:var(--rooh-muted); max-width:500px; margin:0 auto 24px; line-height:1.7;">
+          شكراً لاختياركِ روح (ROOH). تم إرسال تفاصيل طلبكِ إلى فريق التجهيز وسيتواصل معكِ مسؤول الشحن لتأكيد موعد التسليم في محافظة <strong>${gov}</strong>.
+        </p>
 
-    const backdrop = document.getElementById('trackingModalBackdrop');
-    if (backdrop) backdrop.classList.add('active');
-  }
-
-  closeTrackingModal() {
-    const backdrop = document.getElementById('trackingModalBackdrop');
-    if (backdrop) backdrop.classList.remove('active');
-  }
-
-  // --- Toast Notification ---
-  showToast(message) {
-    const container = document.getElementById('toastNotificationContainer');
-    if (!container) return;
-
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<span>✨</span> <div>${message}</div>`;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      toast.style.transition = 'all 0.3s ease';
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
+        <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <button class="btn-rooh btn-rooh-primary" onclick="window.RoohDocumentManager.printInvoice(${JSON.stringify(newOrder).replace(/"/g, '&quot;')})">
+            <span>طباعة أو تحميل الفاتورة (PDF)</span>
+            <span>🖨️</span>
+          </button>
+          <button class="btn-rooh btn-rooh-outline" onclick="document.getElementById('checkoutModal').classList.remove('open')">
+            <span>متابعة التسوق</span>
+          </button>
+        </div>
+      </div>
+    `;
   }
 }
 
-window.roohApp = new RoohStorefrontApp();
-document.addEventListener('DOMContentLoaded', () => {
-  window.roohApp.init();
-});
-
+// Global bootstrap
+window.roohApp = new RoohApp();
+document.addEventListener('DOMContentLoaded', () => window.roohApp.init());

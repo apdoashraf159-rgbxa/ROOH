@@ -1,783 +1,581 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROOH | رُوح — دار مستحضرات التجميل والعطور الفاخرة</title>
-  
-  <!-- Premium Typography: Cairo, Amiri, Cinzel, Montserrat -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;800;900&family=Cinzel:wght@500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/chat.css">
+  <title>ROOH – روح | المنظومة المتكاملة لمستحضرات التجميل الطبيعية الفاخرة</title>
+  <meta name="description"
+    content="روح – الموقع الرسمي وسوق روح لمستحضرات التجميل الملكية الطبيعية. عناية بالبشرة، شعر، عطور نيش، وتصنيع مخصص في مختبر روح. المالك: عبدالرحمن (01227208589).">
+  <!-- Luxury Styles -->
+  <link rel="stylesheet" href="css/rooh-luxury.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 </head>
+
 <body>
 
   <!-- Top Announcement Bar -->
-  <div class="top-bar">
+  <div class="top-announcement">
+    <span>✨ أهلاً بكم في <strong>روح (ROOH)</strong> – شحن مجاني لكافة محافظات جمهورية مصر العربية للطلبات فوق <span
+        class="highlight">750 ج.م</span> | للتواصل المباشر مع الإدارة: <span class="highlight">01227208589</span></span>
+  </div>
+
+  <!-- Main Luxury Header -->
+  <header class="header-main">
+    <div class="container header-inner">
+      <!-- Brand Logo -->
+      <a href="#home" class="brand-logo">
+        <div class="brand-logo-mark">ر</div>
+        <div class="brand-logo-text">
+          <span class="brand-name">ROOH</span>
+          <span class="brand-subtext">روح للمستحضرات التجميل</span>
+        </div>
+      </a>
+
+      <!-- Primary Navigation Links -->
+      <nav>
+        <ul class="nav-links">
+          <li class="nav-item active"><a href="#home">الرئيسية</a></li>
+          <li class="nav-item"><a href="#store">سوق روح (المتجر)</a></li>
+          <li class="nav-item"><a href="#customizer">اصنع منتجكِ بنفسكِ ✨</a></li>
+          <li class="nav-item"><a href="#about">قصة روح ومن نحن</a></li>
+          <li class="nav-item"><a href="#reviews">آراء العملاء</a></li>
+          <li class="nav-item"><a href="track.html">تتبع طلبك 🚚</a></li>
+          <li class="nav-item"><a href="#support">الشكاوى والدعم</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <!-- Customer Account Trigger -->
+        <button class="icon-btn" id="customerAccountBtn" title="حسابي / تسجيل الدخول" style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; background:rgba(191,161,95,0.12); border:1px solid var(--rooh-gold); font-size:0.85rem; color:var(--rooh-dark); font-weight:700;">
+          <span>👤</span>
+          <span id="customerNavName">حسابي</span>
+        </button>
+
+        <!-- Language Switcher -->
+        <button class="icon-btn"
+          onclick="document.body.classList.toggle('ltr'); this.textContent = document.body.classList.contains('ltr') ? 'عربي' : 'EN';"
+          title="تغيير اللغة" style="font-weight:700; font-size:0.8rem;">
+          EN
+        </button>
+
+        <!-- Cart Trigger -->
+        <button class="icon-btn" id="cartOpenBtn" title="حقيبة التسوق">
+          <span>🛍️</span>
+          <span class="badge-counter cart-badge-count" style="display:none;">0</span>
+        </button>
+
+        <a href="#store" class="btn-rooh btn-rooh-primary btn-rooh-sm">
+          <span>تسوقي الآن</span>
+        </a>
+
+        <!-- Mobile Navigation Toggle (hamburger) -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle"
+          title="القائمة" aria-label="فتح القائمة" style="display:none;"
+          onclick="(function(){
+            var nav = document.querySelector('.nav-links');
+            nav.classList.toggle('mobile-open');
+            document.getElementById('mobileNavToggle').textContent = nav.classList.contains('mobile-open') ? '✕' : '☰';
+          })()">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Store Category Quick Subnav -->
+  <div class="store-subnav">
     <div class="container">
-      <div class="top-bar-marquee">
-        <span class="top-bar-badge" data-i18n-ar="عرض حصري" data-i18n-en="Exclusive Offer">عرض حصري</span>
-        <span data-i18n-ar="✨ شحن مجاني فاخر لجميع محافظات مصر عبر أسطول «شحن رُوح» للطلبات فوق 1,200 ج.م" 
-              data-i18n-en="✨ Free Luxury Delivery across all Egyptian Governorates via ROOH Delivery on orders over 1,200 EGP">
-          ✨ شحن مجاني فاخر لجميع محافظات مصر عبر أسطول «شحن رُوح» للطلبات فوق 1,200 ج.م
-        </span>
-      </div>
-      <div class="top-bar-actions">
-        <button id="langSwitchBtn" class="lang-switch-btn" title="Toggle Language">
-          <span>🌐</span>
-          <span id="langSwitchBtnText">English</span>
-        </button>
-        <button id="roleSelectorPill" class="role-selector-pill" title="لوحة إدارة الأعمال">
-          <span>⚙️</span>
-          <span data-i18n-ar="لوحة الإدارة والتحكم" data-i18n-en="Admin Portal">لوحة الإدارة والتحكم</span>
-        </button>
-      </div>
+      <ul class="subnav-items" id="categorySubnav">
+        <!-- Loaded Dynamically via JS -->
+      </ul>
     </div>
   </div>
 
-  <!-- Main Site Header -->
-  <header class="site-header">
-    <div class="container">
-      <div class="header-main">
-        <!-- Brand Logo -->
-        <a href="index.html" class="brand-logo-wrap">
-          <img src="assets/images/logo.svg" alt="ROOH | رُوح" class="brand-logo-img">
-        </a>
-
-        <!-- Search Bar -->
-        <div class="search-form-wrap">
-          <input type="text" id="mainSearchInput" class="search-input-field" 
-                 placeholder="ابحثي عن مستحضرات العناية، السيرومات، عطور رُوح الشرق..."
-                 data-i18n-placeholder-ar="ابحثي عن مستحضرات العناية، السيرومات، عطور رُوح الشرق..."
-                 data-i18n-placeholder-en="Search luxury skincare, serums, Rooh Al Sharq perfumes...">
-          <span class="search-btn-icon">🔍</span>
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="container hero-grid">
+      <div class="hero-text-col">
+        <div class="hero-tag">
+          <span>👑</span>
+          <span>عناية ملكية بمستخلصات طبيعية 100%</span>
         </div>
-
-        <!-- Header Actions Group -->
-        <div class="header-actions-group">
-          <!-- Track Order Shortcut -->
-          <button class="header-icon-btn" onclick="document.getElementById('deliveryFeatureSection').scrollIntoView({behavior: 'smooth'})" title="تتبع الشحنة">
-            <span>🚚</span>
-          </button>
-
-          <!-- Wishlist Button -->
-          <button id="wishlistOpenBtn" class="header-icon-btn" title="قائمة الرغبات">
-            <span>♡</span>
-            <span id="headerWishlistCountBadge" class="header-badge-count" style="display: none;">0</span>
-          </button>
-
-          <!-- Customer Account / Admin Link -->
-          <button class="header-icon-btn" onclick="window.location.href='admin.html'" title="حساب المستخدم / الإدارة">
-            <span>👤</span>
-          </button>
-
-          <!-- Shopping Bag Trigger -->
-          <button id="cartDrawerOpenBtn" class="header-icon-btn" title="حقيبة التسوق">
-            <span>🛍️</span>
-            <span id="headerCartCountBadge" class="header-badge-count">2</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Category Navigation Menu -->
-    <nav class="category-nav-bar">
-      <div class="container">
-        <ul class="category-nav-list">
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link active" data-category="all" data-i18n-ar="كافة المجموعات" data-i18n-en="All Collections">
-              <span>✨</span> كافة المجموعات
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="skincare" data-i18n-ar="العناية بالبشرة" data-i18n-en="Skincare">
-              <span>🌸</span> العناية بالبشرة
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="haircare" data-i18n-ar="العناية بالشعر" data-i18n-en="Haircare">
-              <span>✨</span> العناية بالشعر
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="body" data-i18n-ar="العناية بالجسم" data-i18n-en="Body Care">
-              <span>🕊️</span> العناية بالجسم
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="makeup" data-i18n-ar="المكياج الفاخر" data-i18n-en="Haute Makeup">
-              <span>💄</span> المكياج الفاخر
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="fragrances" data-i18n-ar="العطور الفاخرة" data-i18n-en="Fragrances">
-              <span>👑</span> العطور الفاخرة
-            </a>
-          </li>
-          <li class="category-nav-item">
-            <a href="#catalogSection" class="category-nav-link" data-category="men" data-i18n-ar="العناية بالرجل" data-i18n-en="Men's Grooming">
-              <span>🛡️</span> العناية بالرجل
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-
-  <!-- Hero Promotional Section -->
-  <section class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="container">
-      <div class="hero-content-wrap">
-        <div class="hero-text-block">
-          <div class="hero-pretitle">
-            <span>✦</span>
-            <span data-i18n-ar="إصدار شتاء 2026 الملكي الحصري" data-i18n-en="Royal Winter 2026 Edition">إصدار شتاء 2026 الملكي الحصري</span>
-            <span>✦</span>
-          </div>
-          <h1 class="hero-title">
-            <span data-i18n-ar="رُوح الجمال" data-i18n-en="Pure Beauty">رُوح الجمال</span><br>
-            <span data-i18n-ar="تتجسد في أنقى مستحضرات العناية" data-i18n-en="Expressed in Haute Cosmetics">تتجسد في أنقى مستحضرات العناية</span>
-          </h1>
-          <p class="hero-subtitle" 
-             data-i18n-ar="ابتكارات تجميلية استثنائية من الذهب عيار 24، الورد الدمشقي النادر، والكافيار الأسود الفرنسي. صُممت خصيصاً لتمنحكِ تجربة ملكية لا تُضاهى بتوصيل فوري لجميع محافظات مصر عبر أسطول شحن رُوح."
-             data-i18n-en="Exceptional beauty creations crafted with 24K gold, rare Damask rose, and French black caviar. Designed for majestic radiance with express climate-controlled delivery across Egypt via ROOH Delivery.">
-            ابتكارات تجميلية استثنائية من الذهب عيار 24، الورد الدمشقي النادر، والكافيار الأسود الفرنسي. صُممت خصيصاً لتمنحكِ تجربة ملكية لا تُضاهى بتوصيل فوري لجميع محافظات مصر عبر أسطول شحن رُوح.
-          </p>
-          <div class="hero-actions">
-            <a href="#catalogSection" class="btn-gold">
-              <span>🛍️</span>
-              <span data-i18n-ar="تسوقي المجموعات الملكية" data-i18n-en="Shop Royal Collections">تسوقي المجموعات الملكية</span>
-            </a>
-            <button class="btn-outline-gold" onclick="window.roohApp.openProductModal(19)">
-              <span>👑</span>
-              <span data-i18n-ar="اكتشفي عطر رُوح الشرق" data-i18n-en="Discover Rooh Al Sharq">اكتشفي عطر رُوح الشرق</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Hero Showcase Floating Bottle Card -->
-        <div class="hero-visual-block">
-          <div class="hero-bottle-card">
-            <span class="hero-card-tag" data-i18n-ar="الأكثر طلباً عالمياً" data-i18n-en="Most Desired">الأكثر طلباً عالمياً</span>
-            <img src="assets/images/product-19.svg" alt="عطر رُوح الشرق" class="hero-bottle-img">
-            <h3 class="hero-card-name" data-i18n-ar="عطر «رُوح الشرق» الفاخر" data-i18n-en="Rooh Al Sharq Eau de Parfum">عطر «رُوح الشرق» الفاخر</h3>
-            <div class="hero-card-price">2,450 ج.م <span style="font-size: 0.85rem; font-weight: 400; color: #FFF;">(100 مل)</span></div>
-            <button class="btn-gold" style="width: 100%; margin-top: 1rem; justify-content: center;" onclick="window.roohApp.addToCart(19)">
-              <span data-i18n-ar="طلب فوري مع شحن مجاني" data-i18n-en="Instant Order & Free Shipping">طلب فوري مع شحن مجاني</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Trust & Value Proposition Strip -->
-  <section class="features-strip">
-    <div class="container">
-      <div class="features-grid">
-        <div class="feature-box">
-          <div class="feature-icon-wrap">🚗</div>
-          <div class="feature-info">
-            <h4 data-i18n-ar="أسطول شحن رُوح المبرد" data-i18n-en="ROOH Express Delivery">أسطول شحن رُوح المبرد</h4>
-            <p data-i18n-ar="سيارات مجهزة مبردة لضمان سلامة المستحضرات لكافة المحافظات" data-i18n-en="Climate-controlled fleet across all 27 governorates">سيارات مجهزة مبردة لضمان سلامة المستحضرات لكافة المحافظات</p>
-          </div>
-        </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-wrap">💳</div>
-          <div class="feature-info">
-            <h4 data-i18n-ar="وسائل الدفع المصرية المعتمدة" data-i18n-en="Egyptian Payments">وسائل الدفع المصرية المعتمدة</h4>
-            <p data-i18n-ar="دفع عند الاستلام، إنستاباي، فودافون كاش، وفوري" data-i18n-en="Cash on Delivery, InstaPay, Fawry & E-Wallets">دفع عند الاستلام، إنستاباي، فودافون كاش، وفوري</p>
-          </div>
-        </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-wrap">🌿</div>
-          <div class="feature-info">
-            <h4 data-i18n-ar="تركيبات عضوية نقية 100%" data-i18n-en="100% Organic Actives">تركيبات عضوية نقية 100%</h4>
-            <p data-i18n-ar="خالية تماماً من البارابين والسلفات ومختبرة معملياً" data-i18n-en="Free from sulfates and parabens, dermatologically tested">خالية تماماً من البارابين والسلفات ومختبرة معملياً</p>
-          </div>
-        </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-wrap">💬</div>
-          <div class="feature-info">
-            <h4 data-i18n-ar="استشارة تجميلية ورسائل صوتية" data-i18n-en="Live Beauty Concierge">استشارة تجميلية ورسائل صوتية</h4>
-            <p data-i18n-ar="تحدثي أو سجلي رسالة صوتية مع خبيرات العناية برُوح فوراً" data-i18n-en="Chat or record voice notes with certified advisors">تحدثي أو سجلي رسالة صوتية مع خبيرات العناية برُوح فوراً</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Product Catalog Section -->
-  <section class="container" id="catalogSection" style="padding: 5rem 1.5rem;">
-    <div class="section-header">
-      <span class="section-eyebrow" data-i18n-ar="مجموعات رُوح الحصرية" data-i18n-en="ROOH Curated Catalog">مجموعات رُوح الحصرية</span>
-      <h2 class="section-title" data-i18n-ar="مستحضرات صُممت لتلامس روح الجمال" data-i18n-en="Created to Touch the Soul of Beauty">مستحضرات صُممت لتلامس روح الجمال</h2>
-      <p class="section-desc" data-i18n-ar="تصفحي أحدث ابتكارات دار رُوح في العناية بالبشرة، الشعر، الجسم، المكياج والعطور الشرقية الفاخرة." data-i18n-en="Browse our finest formulas across Skincare, Haircare, Body Care, Luxury Makeup, and Haute Perfumery.">
-        تصفحي أحدث ابتكارات دار رُوح في العناية بالبشرة، الشعر، الجسم، المكياج والعطور الشرقية الفاخرة.
-      </p>
-      <div class="section-divider-crest">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-        </svg>
-      </div>
-    </div>
-
-    <!-- Category Filter Tabs -->
-    <div class="category-filter-tabs">
-      <button class="filter-tab-btn active" data-category="all" data-i18n-ar="كافة المستحضرات" data-i18n-en="All Products">كافة المستحضرات</button>
-      <button class="filter-tab-btn" data-category="skincare" data-i18n-ar="العناية بالبشرة" data-i18n-en="Skincare">العناية بالبشرة</button>
-      <button class="filter-tab-btn" data-category="haircare" data-i18n-ar="العناية بالشعر" data-i18n-en="Haircare">العناية بالشعر</button>
-      <button class="filter-tab-btn" data-category="body" data-i18n-ar="العناية بالجسم" data-i18n-en="Body Care">العناية بالجسم</button>
-      <button class="filter-tab-btn" data-category="makeup" data-i18n-ar="المكياج الفاخر" data-i18n-en="Makeup">المكياج الفاخر</button>
-      <button class="filter-tab-btn" data-category="fragrances" data-i18n-ar="العطور الفاخرة" data-i18n-en="Fragrances">العطور الفاخرة</button>
-      <button class="filter-tab-btn" data-category="men" data-i18n-ar="العناية بالرجل" data-i18n-en="Men's Grooming">العناية بالرجل</button>
-    </div>
-
-    <!-- Dynamic Products Grid -->
-    <div class="products-grid" id="productsGridContainer">
-      <!-- Injected via js/app.js -->
-    </div>
-  </section>
-
-  <!-- ROOH Delivery (Custom Shipping Management System) Feature Section -->
-  <section class="delivery-feature-section" id="deliveryFeatureSection">
-    <div class="container">
-      <div class="delivery-section-grid">
-        <div>
-          <div class="delivery-badge-pill">
-            <span>🛡️</span>
-            <span data-i18n-ar="شركة شحن رُوح المستقلة" data-i18n-en="Independent ROOH Logistics">شركة شحن رُوح المستقلة</span>
-          </div>
-          <h2 class="delivery-title" 
-              data-i18n-ar="شحن رُوح | ROOH Delivery — أسطول لوجستي فاخر ومستقل يخدمكِ في كل مكان بمصر"
-              data-i18n-en="ROOH Delivery — Our Independent Luxury Fleet Serving All Egypt">
-            شحن رُوح | ROOH Delivery — أسطول لوجستي فاخر ومستقل يخدمكِ في كل مكان بمصر
-          </h2>
-          <p style="color: var(--rooh-beige); font-size: 1.05rem; line-height: 1.8;">
-            نحن لا نعتمد على شركات شحن وسيطة. أسسنا أسطولاً لوجستياً خاصاً بنا تحت اسم <strong>«شحن رُوح»</strong> لضمان الحفاظ على برودة العطور وسلامة المستحضرات الملكية حتى باب منزلكِ، مع مندوبي توصيل محترفين وسيارات مجهزة مبردة.
-          </p>
-
-          <ul class="delivery-points-list">
-            <li class="delivery-point-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span><strong>توصيل سريع خلال 24 ساعة:</strong> للقاهرة والجيزة والإسكندرية، وخلال 48 ساعة لكافة محافظات الدلتا والصعيد.</span>
-            </li>
-            <li class="delivery-point-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span><strong>تحصيل نقدي عند الاستلام (COD):</strong> إمكانية معاينة الطرد الفاخر وسداد القيمة نقداً للمندوب مع إيصال رسمي.</span>
-            </li>
-            <li class="delivery-point-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span><strong>تغليف هدايا ملكي مجاني:</strong> كل طرد يخرج في صندوق مخملي فاخر يحمل شارة رُوح الذهبية.</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Live Package Tracking Box -->
-        <div>
-          <div class="tracking-quick-box">
-            <h3 data-i18n-ar="تتبعي شحنتكِ مباشرة" data-i18n-en="Track Your Parcel Live">تتبعي شحنتكِ مباشرة</h3>
-            <p data-i18n-ar="أدخلي رقم بوليصة شحن رُوح لمعرفة موقع الطرد ومندوب التوصيل المكلف فوراً:" data-i18n-en="Enter your ROOH tracking number to see package status and assigned courier:">
-              أدخلي رقم بوليصة شحن رُوح لمعرفة موقع الطرد ومندوب التوصيل المكلف فوراً:
-            </p>
-
-            <form id="homepageTrackingForm" class="tracking-input-group">
-              <input type="text" id="homepageTrackCodeInput" class="tracking-input-field" 
-                     placeholder="مثال: ROOH-EGY-98214" value="ROOH-EGY-98214">
-              <button type="submit" class="btn-gold" style="padding: 0.8rem 1.6rem;">
-                <span data-i18n-ar="تتبع الآن" data-i18n-en="Track Now">تتبع الآن</span>
-              </button>
-            </form>
-
-            <div style="font-size: 0.78rem; color: var(--rooh-sand); margin-top: 1rem;">
-              <span>💡 طلبات تجريبية للمعاينة: </span>
-              <a href="javascript:void(0)" onclick="window.roohApp.openTrackingModal('ROOH-EGY-98214')" style="color: var(--rooh-gold); text-decoration: underline;">ROOH-EGY-98214</a> • 
-              <a href="javascript:void(0)" onclick="window.roohApp.openTrackingModal('ROOH-EGY-98213')" style="color: var(--rooh-gold); text-decoration: underline;">ROOH-EGY-98213</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Customer VIP Reviews Section -->
-  <section class="testimonials-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-eyebrow" data-i18n-ar="آراء عميلات رُوح" data-i18n-en="VIP Testimonials">آراء عميلات رُوح</span>
-        <h2 class="section-title" data-i18n-ar="ثقة ملكية وإشادة بتجربة الجمال الفاخرة" data-i18n-en="Trusted by Elegance">ثقة ملكية وإشادة بتجربة الجمال الفاخرة</h2>
-        <p class="section-desc">أكثر من 15,000 سيدة ورجل اختاروا رُوح كوجهتهم الأساسية للعناية الراقية والعطور الخاصة في مصر.</p>
-      </div>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">
-            "عطر «رُوح الشرق» تحفة فنية بكل معنى الكلمة! ثباته تجاوز يومين كاملين على ملابسي وكل من حولي سألني عن سر هذه الرائحة الساحرة. وسرعة توصيل أسطول شحن رُوح للتجمع كانت خلال 20 ساعة فقط."
-          </p>
-          <div class="testimonial-author-wrap">
-            <div class="author-avatar">ن.أ</div>
-            <div>
-              <div class="author-name">الأميرة نورهان الألفي</div>
-              <div class="author-location">القاهرة الجديدة (التجمع الخامس)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">
-            "سيروم رويال روز بالهيالورونيك غير ملمس بشرتي تماماً خلال أسبوعين. لم أعد أحتاج لكريم الأساس اليومي لأن وجهي أصبح متوهجاً بصورة طبيعية ومخملية. التغليف الفاخر يجعلكِ تشعرين بأنكِ أميرة."
-          </p>
-          <div class="testimonial-author-wrap">
-            <div class="author-avatar">ي.ف</div>
-            <div>
-              <div class="author-name">د. ياسمين فوزي</div>
-              <div class="author-location">الإسكندرية (لوران)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">
-            "تجربة عطر «الفارس» وزيت اللحية بخشب الأرز كانت ممتازة للغاية. خدمة العملاء عبر الرسائل الصوتية ردت عليّ فوراً وساعدتني في الاختيار، ودفعت عبر إنستاباي بسهولة تامة. علامة تجارية مصرية بمواصفات باريسية عالمية."
-          </p>
-          <div class="testimonial-author-wrap">
-            <div class="author-avatar">ط.س</div>
-            <div>
-              <div class="author-name">م. طارق السعدني</div>
-              <div class="author-location">الدقهلية (المنصورة)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Newsletter Section -->
-  <section class="newsletter-section">
-    <div class="container">
-      <div class="newsletter-content">
-        <h2 class="newsletter-title" data-i18n-ar="انضمي لنادي رُوح الملكي للجمال" data-i18n-en="Join ROOH Royal Beauty Club">انضمي لنادي رُوح الملكي للجمال</h2>
-        <p class="newsletter-desc" data-i18n-ar="اشتركي الآن لتحصلي على خصم 15% على أول طلب لكِ ودعوة حصرية لتجربة الإصدارات العطرية المحدودة قبل طرحها." data-i18n-en="Subscribe to receive 15% off your first order and private access to limited parfum releases.">
-          اشتركي الآن لتحصلي على خصم 15% على أول طلب لكِ ودعوة حصرية لتجربة الإصدارات العطرية المحدودة قبل طرحها.
+        <h1 class="hero-title" id="heroDynamicTitle">
+          فخامة الطبيعة.. <br>وإشراقة تدوم في <span class="accent">روحكِ</span>
+        </h1>
+        <p class="hero-desc" id="heroDynamicSubtitle">
+          نبتكر في <strong>روح (ROOH)</strong> مستحضرات تجميل راقية تجمع بين نقاء الزيوت الطبيعية المعصورة على البارد
+          وأحدث علوم التركيبات المعملية لتمنح بشرتكِ وشعركِ رونقاً ساحراً.
         </p>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('شكراً لانضمامكِ لنادي رُوح الملكي! تم إرسال كود الخصم 15% إلى بريدكِ.');">
-          <input type="email" class="newsletter-input" placeholder="أدخلي بريدكِ الإلكتروني..." required>
-          <button type="submit" class="btn-gold" style="padding: 0.8rem 1.8rem;">
-            <span data-i18n-ar="اشتراك ملكي" data-i18n-en="Subscribe">اشتراك ملكي</span>
-          </button>
-        </form>
+        <div class="hero-cta">
+          <a href="#store" class="btn-rooh btn-rooh-primary btn-rooh-lg">
+            <span>تسوقي في سوق روح</span>
+            <span>🛍️</span>
+          </a>
+          <a href="#customizer" class="btn-rooh btn-rooh-outline btn-rooh-lg">
+            <span>ابتكري منتجكِ الخاص</span>
+            <span>🔬</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-badge-float top-badge">
+          <span style="font-size:1.4rem;">🌿</span>
+          <div>
+            <div style="font-weight:700; font-size:0.85rem; color:var(--rooh-dark);">نقاء عضوي معتمد</div>
+            <div style="font-size:0.75rem; color:var(--rooh-muted);">خالٍ تماماً من البارابين</div>
+          </div>
+        </div>
+
+        <div class="hero-card-display">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge-tag tag-new">المجموعة الملكية</span>
+            <span style="font-size:0.85rem; color:var(--rooh-gold); font-weight:700;">ROOH ATELIER</span>
+          </div>
+
+          <div style="text-align:center; margin:auto 0;">
+            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=500&q=80"
+              alt="سيروم روح الملكي"
+              style="width:230px; height:270px; object-fit:cover; border-radius:20px; margin:0 auto; box-shadow:0 15px 35px rgba(0,0,0,0.15);" />
+          </div>
+
+          <div
+            style="background:#FFF; padding:14px; border-radius:12px; border:1px solid var(--rooh-border); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem; color:var(--rooh-dark);">سيروم النضارة الملكي بالفيتامين C
+              </div>
+              <div style="font-size:0.78rem; color:var(--rooh-muted);">خلاصة الورد الجوري وحمض الهيالورونيك</div>
+            </div>
+            <strong style="font-size:1.15rem; color:var(--rooh-gold);">380 ج.م</strong>
+          </div>
+        </div>
+
+        <div class="hero-badge-float bottom-badge">
+          <span style="font-size:1.4rem;">🚀</span>
+          <div>
+            <div style="font-weight:700; font-size:0.85rem; color:var(--rooh-dark);">توصيل لكافة المحافظات</div>
+            <div style="font-size:0.75rem; color:var(--rooh-muted);">خلال 24 - 48 ساعة فقط</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Strip -->
+  <section class="trust-strip">
+    <div class="container trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon-box">🌿</div>
+        <div>
+          <div class="trust-title">مكونات طبيعية 100%</div>
+          <div class="trust-sub">مستخلصات نباتية نقية معتمدة معملياً</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon-box">🔬</div>
+        <div>
+          <div class="trust-title">صنع خصيصاً لكِ</div>
+          <div class="trust-sub">إمكانية تركيب مستحضركِ في مختبرنا</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon-box">🚚</div>
+        <div>
+          <div class="trust-title">شحن لجميع محافظات مصر</div>
+          <div class="trust-sub">شحن مجاني للطلبات فوق 750 ج.م</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon-box">💳</div>
+        <div>
+          <div class="trust-title">دفع آمن ومتعدد</div>
+          <div class="trust-sub">إنستاباي، فودافون كاش، ودفع عند الاستلام</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Souq ROOH Online Store -->
+  <section class="section-padding" id="store">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-subtitle">تشكيلة مستحضرات التجميل الراقية</span>
+        <h2 class="section-title">سوق روح – Souq ROOH</h2>
+        <p class="section-desc">اختاري من بين أرقى منتجات العناية بالبشرة، الشعر، الجسم، وعطور النيش الفاخرة المصنعة
+          بأعلى مواصفات الجودة المصرية والعالمية.</p>
+
+        <!-- Live Search Bar -->
+        <div style="max-width:500px; margin:24px auto 0; position:relative;">
+          <input type="text" id="storeSearchInput" class="ai-chat-input"
+            placeholder="ابحثي عن منتج، مكون، أو كود SKU..."
+            style="width:100%; padding:12px 24px; font-size:0.95rem; box-shadow:var(--rooh-shadow-sm);" />
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="productsGrid">
+        <!-- Rendered Dynamically via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Create Your Own Product (مختبر ابتكار روح) -->
+  <section class="customizer-lab-section" id="customizer">
+    <div class="container">
+      <div class="section-head" style="color:#FFF;">
+        <span class="section-subtitle" style="color:var(--rooh-gold);">تجربة التجميل الحصرية</span>
+        <h2 class="section-title" style="color:#FFF;">مختبر ابتكار روح – اصنعي منتجكِ بنفسكِ</h2>
+        <p class="section-desc" style="color:#DDD4C5;">لأول مرة في مصر: صممي مستحضركِ التجميلي الخاص من الصفر، واختاري
+          القاعدة العضوية والمواد الفعالة والعطر الملكي واكتبي اسمكِ ليُطبع بماء الذهب على العبوة!</p>
+      </div>
+
+      <div id="customizerRoot">
+        <!-- Rendered via customizer.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us & Our Mission -->
+  <section class="section-padding" id="about"
+    style="background:var(--rooh-white); border-top:1px solid var(--rooh-border);">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-subtitle">من نحن ورؤيتنا</span>
+        <h2 class="section-title">قصة علامة "روح" التجميلية</h2>
+      </div>
+
+      <div class="about-two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;">
+        <div>
+          <h3
+            style="font-family:var(--rooh-font-serif); font-size:1.6rem; color:var(--rooh-gold-hover); margin-bottom:16px;">
+            جمال ينبع من الأعماق ليلامس الروح
+          </h3>
+          <p id="storyDynamicDesc"
+            style="color:var(--rooh-muted); font-size:1rem; line-height:1.8; margin-bottom:20px;">
+            انطلقت <strong>روح (ROOH)</strong> برؤية رائدة أسسها <strong>عبدالرحمن</strong> لإعادة تعريف مفهوم الجمال
+            الطبيعي الفاخر في مصر والشرق الأوسط. نحن ندمج بين أسرار الطبيعة العذراء وأحدث ما توصلت إليه علوم التركيبات
+            الجلدية لنقدم لكِ مستحضرات تجميل وعناية تمنح بشرتك نضارة استثنائية وثقة تليق بكِ.
+          </p>
+
+          <div
+            style="background:var(--rooh-sand-light); padding:20px; border-radius:12px; margin-bottom:16px; border-right:4px solid var(--rooh-gold);">
+            <strong style="color:var(--rooh-dark); font-size:1rem; display:block; margin-bottom:6px;">🎯 رسالتنا
+              (Mission):</strong>
+            <p id="storyDynamicMission" style="color:var(--rooh-muted); font-size:0.9rem; margin:0;">
+              تمكين كل امرأة ورجل من الحصول على عناية صحية نقية متطورة مصممة خصيصاً لاحتياجاتهم وبمعايير عالمية خالية
+              تماماً من الكيماويات الضارة.
+            </p>
+          </div>
+
+          <div
+            style="background:var(--rooh-sand-light); padding:20px; border-radius:12px; border-right:4px solid var(--rooh-gold);">
+            <strong style="color:var(--rooh-dark); font-size:1rem; display:block; margin-bottom:6px;">🌟 رؤيتنا
+              (Vision):</strong>
+            <p id="storyDynamicVision" style="color:var(--rooh-muted); font-size:0.9rem; margin:0;">
+              أن تكون "روح" المنظومة التجميلية الأولى في الشرق الأوسط التي تجمع بين التسوق الفاخر، التصنيع المخصص،
+              والشفافية التامة لتقديم حلول جمالية مستدامة.
+            </p>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <img src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=700&q=80"
+            alt="معمل روح"
+            style="width:100%; height:450px; object-fit:cover; border-radius:24px; box-shadow:var(--rooh-shadow-lg); border:1px solid var(--rooh-border);" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer Reviews Wall -->
+  <section class="section-padding" id="reviews" style="background:var(--rooh-cream);">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-subtitle">تجارب حقيقية موثقة</span>
+        <h2 class="section-title">آراء عملاء روح المميزين</h2>
+        <p class="section-desc">نفخر بثقة آلاف العملاء في جميع محافظات مصر الذين اختاروا الجودة الملكية لمستحضراتنا.</p>
+        <button class="btn-rooh btn-rooh-primary btn-rooh-sm" style="margin-top:16px;"
+          onclick="document.getElementById('reviewModal').classList.add('open')">
+          <span>+ شاركينا تجربتكِ وتقييمكِ</span>
+        </button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px;"
+        id="reviewsContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Complaints, Support & Direct Contact -->
+  <section class="section-padding" id="support"
+    style="background:var(--rooh-white); border-top:1px solid var(--rooh-border);">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-subtitle">خدمة العملاء والشكاوى</span>
+        <h2 class="section-title">صوتكِ مسموع في روح</h2>
+        <p class="section-desc">رضاكم هو أولويتنا المطلقة. يمكنكِ تسجيل أي شكوى أو استفسار أو التحدث مع صاحب الشركة
+          الأستاذ عبدالرحمن مباشرة.</p>
+      </div>
+
+      <div class="support-two-col" style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:start;">
+        <!-- Complaints Form -->
+        <div
+          style="background:var(--rooh-ivory); padding:32px; border-radius:18px; border:1px solid var(--rooh-border);">
+          <h3 style="font-family:var(--rooh-font-serif); font-size:1.3rem; color:var(--rooh-dark); margin-bottom:16px;">
+            تسجيل شكوى أو طلب دعم فني
+          </h3>
+          <form id="complaintForm" style="display:flex; flex-direction:column; gap:14px;">
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">الاسم الكريم
+                *</label>
+              <input type="text" id="cmpName" required class="ai-chat-input" style="width:100%; border-radius:8px;"
+                placeholder="اكتب اسمك بالكامل" />
+            </div>
+            <div class="complaint-two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">رقم الهاتف
+                  *</label>
+                <input type="tel" id="cmpPhone" required class="ai-chat-input" style="width:100%; border-radius:8px;"
+                  placeholder="01xxxxxxxxx" />
+              </div>
+              <div>
+                <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">رقم الطلب (إن
+                  وجد)</label>
+                <input type="text" id="cmpOrderNum" class="ai-chat-input" style="width:100%; border-radius:8px;"
+                  placeholder="مثال: 1001" />
+              </div>
+            </div>
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">نوع الاستفسار /
+                الشكوى</label>
+              <select id="cmpCategory" class="select-filter" style="width:100%; border-radius:8px; padding:10px;">
+                <option value="استفسار عن المنتجات">استفسار عن المنتجات وطريقة الاستخدام</option>
+                <option value="تأخر في الشحن">استفسار أو متابعة موعد الشحن والتوصيل</option>
+                <option value="تلف في الشحنة">تلف في الشحنة أو كسر أثناء التوصيل</option>
+                <option value="استبدال أو استرجاع">طلب استبدال أو استرجاع</option>
+                <option value="شكوى مباشرة للمالك">شكوى مباشرة لإدارة الشركة</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">تفاصيل الشكوى أو
+                الملاحظة *</label>
+              <textarea id="cmpDetails" required class="ai-chat-input"
+                style="width:100%; height:90px; border-radius:8px;"
+                placeholder="اكتبي تفاصيل المشكلة بدقة لنتمكن من حلها فوراً..."></textarea>
+            </div>
+            <button type="submit" class="btn-rooh btn-rooh-primary"
+              style="padding:14px; font-size:1rem; margin-top:6px;">
+              <span>إرسال الشكوى لفريق المتابعة</span>
+              <span>📨</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Owner Direct Contact Card -->
+        <div
+          style="background:linear-gradient(135deg, var(--rooh-dark) 0%, #362F27 100%); color:#FFF; padding:32px; border-radius:18px; border:1px solid var(--rooh-gold); box-shadow:var(--rooh-shadow-lg);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+            <div
+              style="width:50px; height:50px; border-radius:50%; background:var(--rooh-gold); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#FFF;">
+              👑
+            </div>
+            <div>
+              <span
+                style="font-size:0.75rem; color:var(--rooh-gold); text-transform:uppercase; letter-spacing:1px; font-weight:700;">مباشرة
+                مع المالك</span>
+              <h3 style="font-family:var(--rooh-font-serif); font-size:1.3rem; margin:0;">الأستاذ / عبدالرحمن</h3>
+              <div style="font-size:0.8rem; color:#DDD4C5;">صاحب ومؤسس شركة روح لمستحضرات التجميل</div>
+            </div>
+          </div>
+
+          <p style="font-size:0.9rem; color:#DDD4C5; line-height:1.7; margin-bottom:24px;">
+            "أبوابنا مفتوحة لخدمتكم دائماً. في حال واجهتكم أي مشكلة أو رغبتم في تقديم اقتراحات خاصة أو استشارات تجميلية،
+            يسعدني التواصل معكم هاتفياً أو عبر تطبيق واتساب بشكل مباشر."
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <a href="https://wa.me/201227208589" target="_blank" class="btn-rooh"
+              style="background:#25D366; color:#FFF; width:100%; font-size:0.95rem; justify-content:center;">
+              <span>محادثة واتساب مباشرة: 01227208589</span>
+              <span>💬</span>
+            </a>
+            <a href="tel:01227208589" class="btn-rooh btn-rooh-gold-outline"
+              style="width:100%; justify-content:center; font-size:0.95rem;">
+              <span>اتصال هاتفي: 01227208589</span>
+              <span>📞</span>
+            </a>
+          </div>
+
+          <div
+            style="margin-top:24px; pt-3; border-top:1px solid rgba(255,255,255,0.1); font-size:0.8rem; color:#A89F91; line-height:1.6;">
+            <div>📍 <strong>المقر الرئيسي:</strong>الاسكندرية، العوايد عزبة محسن </div>
+            <div>🕒 <strong>ساعات العمل:</strong> يومياً من 10 صباحاً حتى 10 مساءً</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Luxury Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <!-- Brand Info -->
-        <div>
-          <img src="assets/images/logo.svg" alt="ROOH | رُوح" style="height: 52px; margin-bottom: 1rem;">
-          <p class="footer-brand-desc" 
-             data-i18n-ar="رُوح | دار مستحضرات تجميل وعطور مصرية بمعايير عالمية فاخرة. نصنع الجمال بأندر المكونات الطبيعية والزيوت العضوية النقية لتلامس روحكِ."
-             data-i18n-en="ROOH | Egyptian luxury cosmetics & haute perfumery crafted with pure botanical oils and rare essences.">
-            رُوح | دار مستحضرات تجميل وعطور مصرية بمعايير عالمية فاخرة. نصنع الجمال بأندر المكونات الطبيعية والزيوت العضوية النقية لتلامس روحكِ.
-          </p>
-          <div class="footer-payment-methods-strip">
-            <span class="payment-badge-pill">💵 الدفع عند الاستلام</span>
-            <span class="payment-badge-pill">⚡ إنستاباي InstaPay</span>
-            <span class="payment-badge-pill">📱 فودافون كاش</span>
-            <span class="payment-badge-pill">🏪 فوري Fawry</span>
-            <span class="payment-badge-pill">💳 ميزة Meeza</span>
-            <span class="payment-badge-pill">💳 فيزا وماستركارد</span>
-          </div>
-        </div>
-
-        <!-- Catalog Links -->
-        <div>
-          <h4 class="footer-col-title" data-i18n-ar="أقسام الكتالوج" data-i18n-en="Collections">أقسام الكتالوج</h4>
-          <ul class="footer-links-list">
-            <li><a href="#catalogSection" class="footer-link">العناية بالبشرة والذهب 24K</a></li>
-            <li><a href="#catalogSection" class="footer-link">علاجات الشعر بالكافيار والأرجان</a></li>
-            <li><a href="#catalogSection" class="footer-link">زبدة الجسم والعود الملكي</a></li>
-            <li><a href="#catalogSection" class="footer-link">مكياج رُوح المخملي مات</a></li>
-            <li><a href="#catalogSection" class="footer-link">عطور «رُوح الشرق» الخاصة</a></li>
-            <li><a href="#catalogSection" class="footer-link">عناية الرجل الفاخرة</a></li>
-          </ul>
-        </div>
-
-        <!-- Customer Service -->
-        <div>
-          <h4 class="footer-col-title" data-i18n-ar="خدمة العملاء وشحن رُوح" data-i18n-en="Customer Care">خدمة العملاء وشحن رُوح</h4>
-          <ul class="footer-links-list">
-            <li><a href="javascript:void(0)" onclick="document.getElementById('deliveryFeatureSection').scrollIntoView({behavior: 'smooth'})" class="footer-link">تتبع شحنة رُوح دليفري</a></li>
-            <li><a href="javascript:void(0)" onclick="window.roohConcierge.toggleChat(true)" class="footer-link">استشارة خبيرة التجميل عبر الشات</a></li>
-            <li><a href="javascript:void(0)" onclick="window.roohConcierge.toggleChat(true)" class="footer-link">إرسال رسالة صوتية للمستشارين</a></li>
-            <li><a href="javascript:void(0)" onclick="alert('سياسة الاسترجاع الفاخرة: استبدال مجاني خلال 14 يوماً عبر أسطول شحن رُوح.')" class="footer-link">سياسة الاسترجاع والضمان الملكي</a></li>
-            <li><a href="admin.html" class="footer-link">بوابة شركاء وموردي رُوح</a></li>
-          </ul>
-        </div>
-
-        <!-- Contact & Corporate -->
-        <div>
-          <h4 class="footer-col-title" data-i18n-ar="المقر الرئيسي والاتصال" data-i18n-en="Contact ROOH">المقر الرئيسي والاتصال</h4>
-          <div class="footer-contact-item">
-            <span>📍</span>
-            <span>برج رُوح الملكي، شارع التسعين الشمالي، القاهرة الجديدة، مصر</span>
-          </div>
-          <div class="footer-contact-item">
-            <span>📞</span>
-            <span>الخط الساخن لأسطول شحن رُوح: <strong>19842</strong></span>
-          </div>
-          <div class="footer-contact-item">
-            <span>📱</span>
-            <span>خدمة كبار العملاء وواتساب: <strong>010 2849 5931</strong></span>
-          </div>
-          <div class="footer-contact-item">
-            <span>✉️</span>
-            <span>concierge@roohbeauty.eg</span>
-          </div>
+  <footer class="footer-main">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h4 style="font-size:1.5rem;">ROOH – روح</h4>
+        <p style="font-size:0.88rem; color:var(--rooh-sand); line-height:1.8; margin-bottom:20px;">
+          المنظومة التجميلية المتكاملة الرائدة في مصر. فخامة المكونات الطبيعية، التصنيع المخصص، وأعلى معايير الرعاية
+          والشفافية.
+        </p>
+        <div style="font-size:0.85rem; color:#C5A880;">
+          📞 هاتف الإدارة: 01227208589<br>
+          📍 التجمع الخامس، القاهرة الجديدة
         </div>
       </div>
 
-      <!-- Footer Bottom Bar -->
-      <div class="footer-bottom-bar">
-        <div>© 2026 رُوح | ROOH Haute Parfumerie & Beauté. جميع الحقوق محفوظة لجمهورية مصر العربية.</div>
-        <div style="display: flex; gap: 1rem;">
-          <a href="admin.html" style="color: var(--rooh-gold); font-weight: 700;">نظام إدارة الأعمال والإدارة (Admin) ←</a>
-        </div>
+      <div class="footer-col">
+        <h4>روابط سريعة</h4>
+        <ul class="footer-links">
+          <li><a href="#home">الرئيسية</a></li>
+          <li><a href="#store">سوق روح (المتجر)</a></li>
+          <li><a href="#customizer">اصنع منتجكِ بنفسكِ</a></li>
+          <li><a href="#about">قصة روح ومن نحن</a></li>
+          <li><a href="#reviews">آراء العملاء والتقييمات</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>الأقسام التجميلية</h4>
+        <ul class="footer-links">
+          <li><a href="#store" onclick="window.roohApp.filterCategory('skincare')">العناية بالبشرة</a></li>
+          <li><a href="#store" onclick="window.roohApp.filterCategory('haircare')">العناية بالشعر</a></li>
+          <li><a href="#store" onclick="window.roohApp.filterCategory('bodycare')">العناية بالجسم</a></li>
+          <li><a href="#store" onclick="window.roohApp.filterCategory('perfumes')">عطور النيش الملكية</a></li>
+          <li><a href="#store" onclick="window.roohApp.filterCategory('special_offers')">العروض والتخفيضات</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>خدمة العملاء والدعم</h4>
+        <ul class="footer-links">
+          <li><a href="#support">الشكاوى وخدمة العملاء</a></li>
+          <li><a href="javascript:void(0)" onclick="window.roohChatbot.toggleWindow(true)">المساعد الذكي (روح AI)</a>
+          </li>
+          <li><a href="tel:01227208589">الاتصال بالمالك: عبدالرحمن</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>جميع الحقوق محفوظة © 2026 شركة روح للمستحضرات التجميل (ROOH) | إشراف: الإدارة العامة</div>
+      <div style="display:flex; align-items:center; gap:20px;">
+        <span>سجل تجاري: CR-74892-CAIRO | بطاقة ضريبية: EG-893-482-109</span>
       </div>
     </div>
   </footer>
 
-  <!-- ==========================================================================
-       MODALS & SLIDE-OUT DRAWERS
-       ========================================================================== -->
+  <!-- Fixed Manager Portal Button at Bottom-Right (تحت على اليمين - لوحة تحكم المدير) -->
+  <div style="position: fixed; bottom: 18px; right: 18px; z-index: 999999;">
+    <a href="login.html" id="managerPortalBtn" title="لوحة تحكم المدير"
+      style="display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 8px 18px; font-size: 0.95rem; font-weight: 800; color: #FFF; background: linear-gradient(135deg, #1E1B18 0%, #2D2722 100%); border: 1.5px solid var(--rooh-gold); border-radius: 50px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35); text-decoration: none; transition: all 0.3s ease; user-select: none;"
+      onmouseover="this.style.background='var(--rooh-gold)'; this.style.color='#1E1B18'; this.style.transform='translateY(-2px)';"
+      onmouseout="this.style.background='linear-gradient(135deg, #1E1B18 0%, #2D2722 100%)'; this.style.color='#FFF'; this.style.transform='translateY(0)';">
+      <span style="font-size:1.1rem;">🔐</span>
+      <span>المدير</span>
+    </a>
+  </div>
 
-  <!-- Slide-Out Shopping Bag Drawer -->
-  <div class="cart-drawer-backdrop" id="cartDrawerBackdrop">
-    <div class="cart-drawer" id="cartDrawer">
-      <div class="cart-drawer-header">
-        <h3>
-          <span>🛍️</span>
-          <span data-i18n-ar="حقيبة التسوق الفاخرة" data-i18n-en="Your Shopping Bag">حقيبة التسوق الفاخرة</span>
-        </h3>
-        <button class="modal-close-btn" id="cartDrawerCloseBtn" style="position: static;">✕</button>
-      </div>
+  <!-- Sliding Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>حقيبة التسوق (سوق روح)</h3>
+      <button id="cartCloseBtn" style="font-size:1.5rem; color:var(--rooh-muted);">&times;</button>
+    </div>
+    <div class="cart-body" id="cartDrawerBody">
+      <!-- Dynamic Items -->
+    </div>
+    <div class="cart-footer" id="cartDrawerFooter">
+      <!-- Dynamic Totals & Checkout -->
+    </div>
+  </div>
 
-      <!-- Items Scroll -->
-      <div class="cart-drawer-items-list" id="cartDrawerItemsList">
-        <!-- Rendered via js/app.js -->
-      </div>
+  <!-- Checkout Modal -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content" style="max-width:850px;">
+      <!-- Loaded dynamically via js/app.js -->
+    </div>
+  </div>
 
-      <!-- Summary Footer -->
-      <div class="cart-drawer-footer">
-        <div class="free-shipping-progress-wrap">
-          <div id="freeShippingProgressText" style="font-weight: 600; color: var(--rooh-burgundy-deep);">
-            🚚 شحن مجاني عبر أسطول شحن رُوح للطلبات فوق 1,200 ج.م
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="freeShippingProgressBar" style="width: 50%;"></div>
-          </div>
-        </div>
-
-        <div class="cart-summary-row">
-          <span data-i18n-ar="المجموع الفرعي:" data-i18n-en="Subtotal:">المجموع الفرعي:</span>
-          <strong id="cartSubtotalDisplay">1,470 ج.م</strong>
-        </div>
-
-        <div class="cart-summary-row">
-          <span data-i18n-ar="ضريبة القيمة المضافة (14%):" data-i18n-en="VAT (14%):">ضريبة القيمة المضافة (14%):</span>
-          <strong id="cartVatDisplay">205 ج.م</strong>
-        </div>
-
-        <div class="cart-summary-row">
-          <span data-i18n-ar="شحن رُوح السريع (القاهرة):" data-i18n-en="ROOH Delivery:">شحن رُوح السريع (القاهرة):</span>
-          <strong id="cartShippingDisplay" style="color: #2E7D32;">مجاني (عرض رُوح)</strong>
-        </div>
-
-        <div class="cart-summary-row cart-summary-total">
-          <span data-i18n-ar="المبلغ الإجمالي المستحق:" data-i18n-en="Total Amount:">المبلغ الإجمالي المستحق:</span>
-          <strong id="cartTotalDisplay" style="color: var(--rooh-burgundy); font-size: 1.4rem;">1,675 ج.م</strong>
-        </div>
-
-        <button class="btn-gold" id="proceedToCheckoutBtn" style="width: 100%; margin-top: 1.2rem; justify-content: center; font-size: 1.05rem;">
-          <span data-i18n-ar="متابعة الشراء وإتمام الطلب ←" data-i18n-en="Proceed to Checkout ←">متابعة الشراء وإتمام الطلب ←</span>
-        </button>
+  <!-- Product Details Modal -->
+  <div class="modal-overlay" id="productDetailModal">
+    <div class="modal-content" style="max-width:820px;">
+      <button class="modal-close-btn"
+        onclick="document.getElementById('productDetailModal').classList.remove('open')">&times;</button>
+      <div id="productModalContent">
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </div>
 
-  <!-- Product Detail Modal -->
-  <div class="modal-backdrop" id="productDetailModalBackdrop">
-    <div class="modal-product-dialog" id="productDetailModalDialog">
-      <!-- Injected dynamically via js/app.js -->
-    </div>
-  </div>
-
-  <!-- Full Checkout Modal -->
-  <div class="modal-backdrop" id="checkoutModalBackdrop">
-    <div class="checkout-modal-dialog">
-      <button class="modal-close-btn" id="checkoutModalCloseBtn">✕</button>
-      
-      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--rooh-sand); padding-bottom: 1rem;">
-        <span style="font-size: 1.6rem;">👑</span>
-        <div>
-          <h2 style="color: var(--rooh-burgundy-deep); font-size: 1.45rem; font-weight: 800;" data-i18n-ar="إتمام طلب رُوح الملكي وتأكيد الشحن" data-i18n-en="Checkout & Order Confirmation">
-            إتمام طلب رُوح الملكي وتأكيد الشحن
-          </h2>
-          <p style="font-size: 0.85rem; color: var(--rooh-text-muted);" data-i18n-ar="يرجى إدخال بيانات التوصيل واختيار طريقة الدفع المفضلة لديكِ" data-i18n-en="Please enter delivery address and select payment method">
-            يرجى إدخال بيانات التوصيل واختيار طريقة الدفع المفضلة لديكِ
-          </p>
-        </div>
-      </div>
-
-      <div class="checkout-grid">
-        <!-- Customer & Egyptian Shipping Address Form -->
-        <div>
-          <h3 style="font-size: 1.15rem; color: var(--rooh-burgundy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>📍</span> <span data-i18n-ar="عنوان الشحن عبر أسطول شحن رُوح" data-i18n-en="Shipping Address via ROOH Delivery">عنوان الشحن عبر أسطول شحن رُوح</span>
-          </h3>
-
-          <div class="form-group">
-            <label class="form-label" data-i18n-ar="الاسم بالكامل:" data-i18n-en="Full Name:">الاسم بالكامل:</label>
-            <input type="text" id="checkoutCustomerName" class="form-input" placeholder="مثال: الأميرة نورهان الألفي" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" data-i18n-ar="رقم هاتف التواصل مع المندوب (موبايل مصري):" data-i18n-en="Egyptian Mobile Phone:">رقم هاتف التواصل مع المندوب (موبايل مصري):</label>
-            <input type="tel" id="checkoutCustomerPhone" class="form-input" placeholder="010XXXXXXXX" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" data-i18n-ar="المحافظة المصرية (تحدد تكلفة وموعد شحن رُوح):" data-i18n-en="Egyptian Governorate:">المحافظة المصرية (تحدد تكلفة وموعد شحن رُوح):</label>
-            <select id="checkoutGovernorateSelect" class="form-select">
-              <!-- Populated via js/app.js with all 27 governorates -->
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" data-i18n-ar="العنوان التفصيلي واسم المنطقة / الكمبوند:" data-i18n-en="Detailed Address:">العنوان التفصيلي واسم المنطقة / الكمبوند:</label>
-            <textarea id="checkoutCustomerAddress" class="form-textarea" rows="2" placeholder="المدينة، اسم الشارع، رقم العمارة أو الفيلا، ورقم الشقة..."></textarea>
-          </div>
-
-          <!-- Egyptian Payment Methods Selector -->
-          <h3 style="font-size: 1.15rem; color: var(--rooh-burgundy); margin: 1.6rem 0 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>💳</span> <span data-i18n-ar="طريقة الدفع المعتمدة (بالجنيه المصري EGP)" data-i18n-en="Egyptian Payment Method">طريقة الدفع المعتمدة (بالجنيه المصري EGP)</span>
-          </h3>
-
-          <div class="payment-methods-grid">
-            <div class="payment-method-card selected" data-method="cod">
-              <div class="payment-method-icon">💵</div>
-              <div class="payment-method-text">
-                <h5 data-i18n-ar="الدفع عند الاستلام (COD)" data-i18n-en="Cash on Delivery">الدفع عند الاستلام (COD)</h5>
-                <p data-i18n-ar="استلام الطرد ومعاينته وسداد المبلغ لمندوب أسطول شحن رُوح نقداً" data-i18n-en="Pay cash to the ROOH Delivery courier at your doorstep">استلام الطرد ومعاينته وسداد المبلغ لمندوب أسطول شحن رُوح نقداً</p>
-              </div>
-            </div>
-
-            <div class="payment-method-card" data-method="instapay">
-              <div class="payment-method-icon">⚡</div>
-              <div class="payment-method-text">
-                <h5 data-i18n-ar="إنستاباي (InstaPay IPN) — تحويل لحظي فوري" data-i18n-en="InstaPay Instant Network">إنستاباي (InstaPay IPN) — تحويل لحظي فوري</h5>
-                <p data-i18n-ar="تحويل مباشر عبر تطبيق إنستاباي إلى عنوان rooh@instapay بدون أي رسوم إضافية" data-i18n-en="Instant fee-free transfer via InstaPay to rooh@instapay">تحويل مباشر عبر تطبيق إنستاباي إلى عنوان rooh@instapay بدون أي رسوم إضافية</p>
-              </div>
-            </div>
-
-            <div class="payment-method-card" data-method="wallet">
-              <div class="payment-method-icon">📱</div>
-              <div class="payment-method-text">
-                <h5 data-i18n-ar="محافظ كاش (فودافون كاش، أورنج، اتصالات، وي)" data-i18n-en="Mobile E-Wallets">محافظ كاش (فودافون كاش، أورنج، اتصالات، وي)</h5>
-                <p data-i18n-ar="تحويل فوري إلى رقم محفظة رُوح الرسمية: 010 2849 5931" data-i18n-en="Transfer to ROOH official merchant wallet">تحويل فوري إلى رقم محفظة رُوح الرسمية: 010 2849 5931</p>
-              </div>
-            </div>
-
-            <div class="payment-method-card" data-method="fawry">
-              <div class="payment-method-icon">🏪</div>
-              <div class="payment-method-text">
-                <h5 data-i18n-ar="خدمة فوري (Fawry Pay)" data-i18n-en="Fawry Pay">خدمة فوري (Fawry Pay)</h5>
-                <p data-i18n-ar="استخراج رقم مرجعي للدفع في أي صيدلية أو منفذ فوري خلال 48 ساعة" data-i18n-en="Generate 10-digit code to pay at any Fawry kiosk within 48h">استخراج رقم مرجعي للدفع في أي صيدلية أو منفذ فوري خلال 48 ساعة</p>
-              </div>
-            </div>
-
-            <div class="payment-method-card" data-method="card">
-              <div class="payment-method-icon">💳</div>
-              <div class="payment-method-text">
-                <h5 data-i18n-ar="بطاقات الدفع (فيزا، ماستركارد، كارت ميزة الوطني)" data-i18n-en="Credit/Debit Cards">بطاقات الدفع (فيزا، ماستركارد، كارت ميزة الوطني)</h5>
-                <p data-i18n-ar="دفع مشفر وآمن بتصريح البنك المركزي المصري ومعيار 3D Secure" data-i18n-en="Encrypted SSL checkout verified by Central Bank of Egypt">دفع مشفر وآمن بتصريح البنك المركزي المصري ومعيار 3D Secure</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Side: Order Summary & Active Payment Details -->
-        <div>
-          <div style="background: var(--rooh-cream); border: 1px solid var(--rooh-sand); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h4 style="color: var(--rooh-burgundy-deep); font-size: 1.1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--rooh-sand); padding-bottom: 0.5rem;" data-i18n-ar="ملخص الحساب المالي" data-i18n-en="Order Financial Summary">
-              ملخص الحساب المالي
-            </h4>
-
-            <div class="cart-summary-row">
-              <span data-i18n-ar="مجموع المنتجات:" data-i18n-en="Items Subtotal:">مجموع المنتجات:</span>
-              <strong id="checkoutSubtotal">1,470 ج.م</strong>
-            </div>
-
-            <div class="cart-summary-row">
-              <span data-i18n-ar="ضريبة القيمة المضافة (14%):" data-i18n-en="VAT (14%):">ضريبة القيمة المضافة (14%):</span>
-              <strong id="checkoutVat">205 ج.م</strong>
-            </div>
-
-            <div class="cart-summary-row">
-              <span data-i18n-ar="شحن رُوح للمحافظة:" data-i18n-en="ROOH Delivery Fee:">شحن رُوح للمحافظة:</span>
-              <strong id="checkoutShipping" style="color: #2E7D32;">شحن مجاني</strong>
-            </div>
-
-            <div class="cart-summary-row" id="checkoutCodFeeRow">
-              <span data-i18n-ar="رسوم خدمة الدفع عند الاستلام:" data-i18n-en="COD Handling Fee:">رسوم خدمة الدفع عند الاستلام:</span>
-              <strong id="checkoutCodFeeVal">20 ج.م</strong>
-            </div>
-
-            <div class="cart-summary-row cart-summary-total">
-              <span data-i18n-ar="المبلغ الإجمالي النهائي:" data-i18n-en="Final Total:">المبلغ الإجمالي النهائي:</span>
-              <strong id="checkoutTotal" style="color: var(--rooh-burgundy); font-size: 1.45rem;">1,695 ج.م</strong>
-            </div>
-          </div>
-
-          <!-- Dynamic Payment Details Box (Fawry Code / Wallet / InstaPay / Card Input) -->
-          <div id="checkoutPaymentDetailsContainer" style="margin-bottom: 1.5rem;">
-            <!-- Injected via js/payment.js -->
-          </div>
-
-          <!-- Submit Order Button -->
-          <button class="btn-burgundy" style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 1rem;" onclick="window.roohApp.submitOrder()">
-            <span>🔒</span>
-            <span data-i18n-ar="تأكيد الطلب وشحن الطرد الملكي الآن" data-i18n-en="Confirm Order & Dispatch Parcel">تأكيد الطلب وشحن الطرد الملكي الآن</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ROOH Delivery Live Tracking Modal -->
-  <div class="modal-backdrop" id="trackingModalBackdrop">
-    <div class="checkout-modal-dialog" style="max-width: 780px;">
-      <button class="modal-close-btn" id="trackingModalCloseBtn">✕</button>
-      <div id="trackingModalContentContainer">
-        <!-- Injected via js/delivery.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Wishlist Modal -->
-  <div class="modal-backdrop" id="wishlistModalBackdrop">
-    <div class="checkout-modal-dialog" style="max-width: 650px;">
-      <button class="modal-close-btn" id="wishlistModalCloseBtn">✕</button>
-      <h3 style="color: var(--rooh-burgundy-deep); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
-        <span>♥</span> <span data-i18n-ar="قائمة الرغبات الملكية المحفوظة" data-i18n-en="Your Royal Wishlist">قائمة الرغبات الملكية المحفوظة</span>
+  <!-- Review Modal -->
+  <div class="modal-overlay" id="reviewModal">
+    <div class="modal-content" style="max-width:550px;">
+      <button class="modal-close-btn"
+        onclick="document.getElementById('reviewModal').classList.remove('open')">&times;</button>
+      <h3 style="font-family:var(--rooh-font-serif); font-size:1.4rem; color:var(--rooh-dark); margin-bottom:16px;">
+        تقييم تجربة منتجات روح
       </h3>
-      <div id="wishlistItemsContainer">
-        <!-- Rendered via js/app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- ==========================================================================
-       LIVE CONCIERGE CHAT & REAL VOICE MESSAGES WIDGET
-       ========================================================================== -->
-  <div class="rooh-chat-launcher">
-    <div class="chat-launcher-pill" onclick="window.roohConcierge.toggleChat(true)">
-      <span>🌹</span>
-      <span data-i18n-ar="استشيري خبيرة تجميل رُوح" data-i18n-en="Beauty Concierge">استشيري خبيرة تجميل رُوح</span>
-    </div>
-    <button class="chat-launcher-btn" id="roohChatLauncherBtn" title="المحادثة المباشرة والرسائل الصوتية">
-      <div class="chat-pulse-indicator"></div>
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Chat Dialog Box -->
-  <div class="rooh-chat-window" id="roohChatWindow">
-    <!-- Header -->
-    <div class="chat-window-header">
-      <div class="chat-advisor-info">
-        <div class="advisor-avatar-box">
-          <span>س</span>
-          <div class="advisor-online-badge"></div>
+      <form id="submitReviewForm" style="display:flex; flex-direction:column; gap:14px;">
+        <div>
+          <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">اسمكِ الكريم *</label>
+          <input type="text" id="revCustomerName" required class="ai-chat-input" style="width:100%; border-radius:8px;"
+            placeholder="اكتبي اسمكِ" />
         </div>
         <div>
-          <div class="advisor-name" data-i18n-ar="سارة — خبيرة التجميل برُوح" data-i18n-en="Sarah — ROOH Advisor">سارة — خبيرة التجميل برُوح</div>
-          <div class="advisor-status" data-i18n-ar="متصلة الآن • شات ورسائل صوتية" data-i18n-en="Online • Text & Voice Notes">متصلة الآن • شات ورسائل صوتية</div>
+          <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">التقييم بالنجوم *</label>
+          <select id="revRatingSelect" class="select-filter" style="width:100%; border-radius:8px; padding:10px;">
+            <option value="5">★★★★★ 5 نجوم (ممتاز جداً)</option>
+            <option value="4">★★★★☆ 4 نجوم (جيد جداً)</option>
+            <option value="3">★★★☆☆ 3 نجوم (جيد)</option>
+          </select>
         </div>
-      </div>
-      <div class="chat-header-actions">
-        <button id="roohChatCloseBtn">✕</button>
-      </div>
-    </div>
-
-    <!-- Quick Question Buttons -->
-    <div class="chat-quick-actions-bar">
-      <button class="chat-quick-btn" data-query="روتين البشرة">🌸 روتين البشرة</button>
-      <button class="chat-quick-btn" data-query="تتبع شحنتي">🚚 تتبع شحنة رُوح</button>
-      <button class="chat-quick-btn" data-query="عطر رُوح الشرق">👑 عطر رُوح الشرق</button>
-      <button class="chat-quick-btn" data-query="طرق الدفع المصرية">💳 طرق الدفع</button>
-    </div>
-
-    <!-- Messages Container -->
-    <div class="chat-messages-scroll" id="roohChatMessagesContainer">
-      <!-- Rendered via js/chat.js -->
-    </div>
-
-    <!-- Live Recording Bar Overlay -->
-    <div class="recording-live-bar" id="roohRecordingLiveBar">
-      <div class="rec-timer-group">
-        <div class="rec-blink-dot"></div>
-        <span id="roohRecTimerText">00:00</span>
-        <span style="font-size: 0.8rem; color: #666;" data-i18n-ar="جاري تسجيل رسالتكِ الصوتية..." data-i18n-en="Recording voice note...">جاري تسجيل رسالتكِ الصوتية...</span>
-      </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <button class="rec-cancel-btn" id="roohRecCancelBtn" data-i18n-ar="إلغاء" data-i18n-en="Cancel">إلغاء</button>
-        <button class="rec-stop-save-btn" id="roohRecStopSaveBtn">
-          <span>✔</span>
-          <span data-i18n-ar="إرسال الصوت" data-i18n-en="Send Voice">إرسال الصوت</span>
+        <div>
+          <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">عنوان الرأي أو التجربة
+            *</label>
+          <input type="text" id="revTitle" required class="ai-chat-input" style="width:100%; border-radius:8px;"
+            placeholder="مثال: بشرتي أصبحت نضرة كالحرير!" />
+        </div>
+        <div>
+          <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">تفاصيل تجربتكِ مع المنتج
+            *</label>
+          <textarea id="revComment" required class="ai-chat-input" style="width:100%; height:90px; border-radius:8px;"
+            placeholder="اكتبي رأيكِ بمصداقية..."></textarea>
+        </div>
+        <button type="submit" class="btn-rooh btn-rooh-primary" style="padding:12px; font-size:1rem;">
+          <span>نشر التقييم في المجتمع</span>
         </button>
-      </div>
-    </div>
-
-    <!-- Chat Input Bar -->
-    <div class="chat-input-container">
-      <button class="chat-record-mic-btn" id="roohChatMicBtn" title="تسجيل رسالة صوتية لخبيرة التجميل">
-        🎙️
-      </button>
-      <input type="text" class="chat-text-input" id="roohChatTextInput" 
-             placeholder="اكتبي استشارتكِ هنا أو اضغطي الميكروفون..."
-             data-i18n-placeholder-ar="اكتبي استشارتكِ هنا أو اضغطي الميكروفون..."
-             data-i18n-placeholder-en="Write your question or press mic to record...">
-      <button class="chat-send-btn" id="roohChatSendBtn" title="إرسال">
-        ➤
-      </button>
+      </form>
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div class="toast-container" id="toastNotificationContainer"></div>
+  <!-- Customer Portal Modal (Login / Register / Profile & Orders) -->
+  <div class="modal-overlay" id="customerModal">
+    <div class="modal-content" style="max-width:620px;">
+      <button class="modal-close-btn" onclick="document.getElementById('customerModal').classList.remove('open')">&times;</button>
+      <div id="customerModalBody">
+        <!-- Rendered dynamically via js/app.js -->
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
-  <script src="js/state.js"></script>
-  <script src="js/delivery.js"></script>
-  <script src="js/payment.js"></script>
-  <script src="js/chat.js"></script>
+  <script src="data/seed.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/invoice.js"></script>
+  <script src="js/customizer.js"></script>
+  <script src="js/chatbot.js"></script>
   <script src="js/app.js"></script>
 </body>
-</html>
 
+</html>
